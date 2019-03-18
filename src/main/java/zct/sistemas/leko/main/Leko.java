@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import zct.sistemas.leko.util.HibernateUtil;
 
 public class Leko extends Application {
 
@@ -29,6 +30,12 @@ public class Leko extends Application {
 
 	public static void main(String[] args) {
 		launch();
+	}
+
+	@Override
+	public void stop() throws Exception {
+		HibernateUtil.closeSessionFactory();
+		System.exit(0);
 	}
 
 //	private static class ResourceWrapper extends ListResourceBundle {

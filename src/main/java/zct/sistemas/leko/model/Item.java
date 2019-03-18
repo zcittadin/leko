@@ -71,8 +71,7 @@ public class Item implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Item [id=" + id + ", descricao=" + descricao + ", valorUnitario=" + valorUnitario + ", unidade="
-				+ unidade + "]";
+		return descricao;
 	}
 
 	@Override

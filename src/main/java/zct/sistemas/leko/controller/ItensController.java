@@ -79,7 +79,8 @@ public class ItensController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		btNovo.setGraphic(new ImageView(new Image(getClass().getResource("/icons/add.png").toExternalForm())));
 		btOrcamento.setGraphic(new ImageView(new Image(getClass().getResource("/icons/money.png").toExternalForm())));
-		btDadosHeader.setGraphic(new ImageView(new Image(getClass().getResource("/icons/header.png").toExternalForm())));
+		btDadosHeader
+				.setGraphic(new ImageView(new Image(getClass().getResource("/icons/header.png").toExternalForm())));
 		prepareTableView();
 		retrieveItens();
 	}
@@ -182,7 +183,7 @@ public class ItensController implements Initializable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	private void retrieveItens() {
@@ -352,7 +353,7 @@ public class ItensController implements Initializable {
 										}
 									});
 //									Tooltip.install(btn, tooltipDelete);
-									btn.setStyle("-fx-graphic: url('/icons/cancel.png');");
+									btn.setStyle("-fx-graphic: url('/icons/trash.png');");
 									btn.setCursor(Cursor.HAND);
 									setGraphic(btn);
 									setText(null);

@@ -24,7 +24,7 @@
       <Label layoutX="105.0" layoutY="88.0" text="Valor unitário" />
       <TextField fx:id="txtDescricao" layoutX="105.0" layoutY="52.0" prefHeight="25.0" prefWidth="577.0" />
       <TextField fx:id="txtValor" layoutX="105.0" layoutY="105.0" prefHeight="25.0" prefWidth="274.0" />
-      <TableView fx:id="tblItens" layoutX="54.0" layoutY="148.0" prefHeight="427.0" prefWidth="698.0">
+      <TableView fx:id="tblItens" layoutX="54.0" layoutY="148.0" prefHeight="427.0" prefWidth="698.0" stylesheets="@../css/style.css">
         <columns>
           <TableColumn fx:id="colDescricao" prefWidth="381.0" text="Descrição" />
           <TableColumn fx:id="colValor" prefWidth="106.0" text="Valor unitário" />
