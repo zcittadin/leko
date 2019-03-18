@@ -60,6 +60,7 @@ public class DadosHeaderController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		btSave.setGraphic(new ImageView(new Image(getClass().getResource("/icons/save.png").toExternalForm())));
 		btCancel.setGraphic(new ImageView(new Image(getClass().getResource("/icons/cancel.png").toExternalForm())));
+		btLogo.setGraphic(new ImageView(new Image(getClass().getResource("/icons/pencil.png").toExternalForm())));
 
 		Task<List<DadosHeader>> findTask = new Task<List<DadosHeader>>() {
 			@Override
@@ -79,6 +80,7 @@ public class DadosHeaderController implements Initializable {
 				txtTelefone.setText(dados.getTelefone());
 				txtEmail.setText(dados.getEmail());
 				txtCep.setText(dados.getCep());
+				logoPath = dados.getLogo();
 				if (dados.getLogo() != null)
 					imgLogo.setImage(new Image(getLogoPath(dados.getLogo())));
 			}
@@ -97,6 +99,9 @@ public class DadosHeaderController implements Initializable {
 
 	@FXML
 	void save(ActionEvent event) {
+		if (validateFields() == false) {
+			return;
+		}
 		dados.setNomeEmpresa(txtNomeEmpresa.getText());
 		dados.setEndereco(txtEndereco.getText());
 		dados.setCidade(txtCidade.getText());
@@ -157,6 +162,50 @@ public class DadosHeaderController implements Initializable {
 				throw new IllegalStateException(ex);
 			}
 		}
+	}
+
+	private boolean validateFields() {
+		if ((txtNomeEmpresa.getText() == null || "".equals(txtNomeEmpresa.getText().trim()))) {
+			AlertUtil.makeWarning("Atenção", "Informe o nome da empresa.");
+			txtNomeEmpresa.requestFocus();
+			return false;
+		}
+		if ((txtEndereco.getText() == null || "".equals(txtEndereco.getText().trim()))) {
+			AlertUtil.makeWarning("Atenção", "Informe o endereço da empresa.");
+			txtEndereco.requestFocus();
+			return false;
+		}
+		if ((txtCidade.getText() == null || "".equals(txtCidade.getText().trim()))) {
+			AlertUtil.makeWarning("Atenção", "Informe a cidade da empresa.");
+			txtCidade.requestFocus();
+			return false;
+		}
+		if ((txtEstado.getText() == null || "".equals(txtEstado.getText().trim()))) {
+			AlertUtil.makeWarning("Atenção", "Informe o estado da empresa.");
+			txtEstado.requestFocus();
+			return false;
+		}
+		if ((txtPais.getText() == null || "".equals(txtPais.getText().trim()))) {
+			AlertUtil.makeWarning("Atenção", "Informe o pais da empresa.");
+			txtPais.requestFocus();
+			return false;
+		}
+		if ((txtTelefone.getText() == null || "".equals(txtTelefone.getText().trim()))) {
+			AlertUtil.makeWarning("Atenção", "Informe o telefone da empresa.");
+			txtTelefone.requestFocus();
+			return false;
+		}
+		if ((txtEmail.getText() == null || "".equals(txtEmail.getText().trim()))) {
+			AlertUtil.makeWarning("Atenção", "Informe o E-mail da empresa.");
+			txtEmail.requestFocus();
+			return false;
+		}
+		if ((txtCep.getText() == null || "".equals(txtCep.getText().trim()))) {
+			AlertUtil.makeWarning("Atenção", "Informe o CEP da empresa.");
+			txtCep.requestFocus();
+			return false;
+		}
+		return true;
 	}
 
 	private String getLogoPath(String url) {
