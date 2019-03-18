@@ -3,6 +3,7 @@ package zct.sistemas.leko.controller;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javafx.beans.property.SimpleObjectProperty;
@@ -17,11 +18,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.fxml.JavaFXBuilderFactory;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Pagination;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
@@ -51,6 +55,10 @@ public class ItensController implements Initializable {
 	private TableColumn colValor;
 	@FXML
 	private TableColumn colUnidade;
+	@FXML
+	private TableColumn colEditar;
+	@FXML
+	private TableColumn colExcluir;
 	@FXML
 	private StackPane paneTable;
 
@@ -85,11 +93,62 @@ public class ItensController implements Initializable {
 			root = (Parent) fxmlloader.load(url.openStream());
 			stage.setScene(new Scene(root));
 			stage.getIcons().add(new Image("/icons/tomada.png"));
-			stage.setTitle("Adicionar veículo");
+			stage.setTitle("Cadastro de ítens");
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.initOwner(tblItens.getScene().getWindow());
 			stage.setResizable(false);
 			stage.showAndWait();
+			retrieveItens();
+			tblItens.refresh();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	private void createOrcamento() {
+		try {
+			Stage stage;
+			Parent root;
+			stage = new Stage();
+			URL url = getClass().getResource("/fxml/FormOrcamentos.fxml");
+			FXMLLoader fxmlloader = new FXMLLoader();
+			fxmlloader.setLocation(url);
+			fxmlloader.setBuilderFactory(new JavaFXBuilderFactory());
+			root = (Parent) fxmlloader.load(url.openStream());
+			stage.setScene(new Scene(root));
+			((FormOrcamentosController) fxmlloader.getController()).setContext(itens);
+			stage.getIcons().add(new Image("/icons/tomada.png"));
+			stage.setTitle("Novo orçamento");
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.initOwner(tblItens.getScene().getWindow());
+			stage.setResizable(false);
+			stage.showAndWait();
+//			tblItens.refresh();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void editItem(Item it) {
+		try {
+			Stage stage;
+			Parent root;
+			stage = new Stage();
+			URL url = getClass().getResource("/fxml/FormEditarItem.fxml");
+			FXMLLoader fxmlloader = new FXMLLoader();
+			fxmlloader.setLocation(url);
+			fxmlloader.setBuilderFactory(new JavaFXBuilderFactory());
+			root = (Parent) fxmlloader.load(url.openStream());
+			stage.setScene(new Scene(root));
+			((FormEditarItemController) fxmlloader.getController()).setContext(it);
+			stage.getIcons().add(new Image("/icons/tomada.png"));
+			stage.setTitle("Editar ítem");
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.initOwner(tblItens.getScene().getWindow());
+			stage.setResizable(false);
+			stage.showAndWait();
+			retrieveItens();
 			tblItens.refresh();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -186,9 +245,104 @@ public class ItensController implements Initializable {
 						return simpleObject;
 					}
 				});
+		Callback<TableColumn<Item, Object>, TableCell<Item, Object>> cellEditFactory = //
+				new Callback<TableColumn<Item, Object>, TableCell<Item, Object>>() {
+					@Override
+					public TableCell call(final TableColumn<Item, Object> param) {
+						final TableCell<Item, Object> cell = new TableCell<Item, Object>() {
+
+							final Button btn = new Button();
+
+							@Override
+							public void updateItem(Object item, boolean empty) {
+								super.updateItem(item, empty);
+								if (empty) {
+									setGraphic(null);
+									setText(null);
+								} else {
+									btn.setOnAction(event -> {
+										Item it = getTableView().getItems().get(getIndex());
+										editItem(it);
+									});
+									// Tooltip.install(btn, tooltipEdit);
+									btn.setStyle("-fx-graphic: url('/icons/pencil.png');");
+									btn.setCursor(Cursor.HAND);
+									setGraphic(btn);
+									setText(null);
+								}
+							}
+						};
+						return cell;
+					}
+				};
+		colEditar.setCellFactory(cellEditFactory);
+
+		Callback<TableColumn<Item, Object>, TableCell<Item, Object>> cellExcluirFactory = //
+				new Callback<TableColumn<Item, Object>, TableCell<Item, Object>>() {
+					@Override
+					public TableCell call(final TableColumn<Item, Object> param) {
+						final TableCell<Item, Object> cell = new TableCell<Item, Object>() {
+							final Button btn = new Button();
+
+							@Override
+							public void updateItem(Object item, boolean empty) {
+								super.updateItem(item, empty);
+								if (empty) {
+									setGraphic(null);
+									setText(null);
+								} else {
+									btn.setOnAction(event -> {
+										Optional<ButtonType> result = AlertUtil.makeConfirm("Exclusão",
+												"Deseja realmente remover este veículo?");
+										if (result.get() == ButtonType.OK) {
+											Item it = getTableView().getItems().get(getIndex());
+											Task<Void> exclusionTask = new Task<Void>() {
+												@Override
+												protected Void call() throws Exception {
+//													maskerPane.setVisible(true);
+//													veiculoDAO.removeVeiculo(it);
+													return null;
+												}
+											};
+											exclusionTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+												@Override
+												public void handle(WorkerStateEvent arg0) {
+//													NotificationsUtil.makeInfo("Cadastro de veículos",
+//															"Veículo removido com sucesso");
+
+//													veiculosItens.remove(it);
+//													tblVeiculos.refresh();
+//													maskerPane.setVisible(false);
+												}
+											});
+											exclusionTask.setOnFailed(new EventHandler<WorkerStateEvent>() {
+												@Override
+												public void handle(WorkerStateEvent arg0) {
+//													maskerPane.setVisible(false);
+													AlertUtil.makeError("Erro",
+															"Ocorreu um erro ao remover o veículo.");
+												}
+											});
+											new Thread(exclusionTask).run();
+										}
+									});
+//									Tooltip.install(btn, tooltipDelete);
+									btn.setStyle("-fx-graphic: url('/icons/cancel.png');");
+									btn.setCursor(Cursor.HAND);
+									setGraphic(btn);
+									setText(null);
+								}
+							}
+						};
+						return cell;
+					}
+				};
+		colExcluir.setCellFactory(cellExcluirFactory);
 		colDescricao.setStyle(CENTER_COLUMN);
 		colValor.setStyle(CENTER_COLUMN);
 		colUnidade.setStyle(CENTER_COLUMN);
+		colEditar.setStyle(CENTER_COLUMN);
+		colExcluir.setStyle(CENTER_COLUMN);
 
 	}
 }

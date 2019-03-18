@@ -32,7 +32,7 @@ public class Item implements Serializable {
 
 	public Item(Long id, String descricao, Double valorUnitario, String unidade) {
 		this.id = id;
-		this.descricao = descricao;
+		this.descricao = descricao.toUpperCase();
 		this.valorUnitario = valorUnitario;
 		this.unidade = unidade;
 	}
@@ -50,7 +50,7 @@ public class Item implements Serializable {
 	}
 
 	public void setDescricao(String descricao) {
-		this.descricao = descricao;
+		this.descricao = descricao.toUpperCase();
 	}
 
 	public Double getValorUnitario() {

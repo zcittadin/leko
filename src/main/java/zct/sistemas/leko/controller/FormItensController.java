@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -73,6 +74,14 @@ public class FormItensController implements Initializable {
 		cmbUnidades.getItems().setAll(Unidades.values());
 		prepareTableView();
 		tblItens.setItems(obsItens);
+		txtValor.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				if (!newValue.matches("\\d{0,7}([\\.]\\d{0,4})?")) {
+					txtValor.setText(oldValue);
+				}
+			}
+		});
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -95,11 +104,14 @@ public class FormItensController implements Initializable {
 		saveTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent event) {
-				NotificationsUtil.makeInfo("Cadastro de itens", "Item cadastrado com sucesso.");
-				txtDescricao.clear();
-				txtValor.clear();
-				cmbUnidades.getItems().setAll(Unidades.values());
-				txtDescricao.requestFocus();
+				Stage stage = (Stage) txtDescricao.getScene().getWindow();
+				stage.close();
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						NotificationsUtil.makeInfo("Cadastro de itens", "Itens cadastrados com sucesso.");
+					}
+				});
 			}
 
 		});
@@ -107,6 +119,8 @@ public class FormItensController implements Initializable {
 			@Override
 			public void handle(WorkerStateEvent workerStateEvent) {
 				AlertUtil.makeError("Erro", "Ocorreu um erro ao tentar gravar o item.");
+				Stage stage = (Stage) txtDescricao.getScene().getWindow();
+				stage.close();
 			}
 		});
 		new Thread(saveTask).run();
@@ -142,8 +156,17 @@ public class FormItensController implements Initializable {
 
 	@FXML
 	private void cancel() {
-		Stage stage = (Stage) txtDescricao.getScene().getWindow();
-		stage.close();
+		if (obsItens.size() > 0) {
+			Optional<ButtonType> result = AlertUtil.makeConfirm("Atenção",
+					"Existem ítens que ainda não foram salvos. Ao continuar os dados serão perdidos. Deseja continuar?");
+			if (result.get() == ButtonType.OK) {
+				Stage stage = (Stage) txtDescricao.getScene().getWindow();
+				stage.close();
+			}
+		} else {
+			Stage stage = (Stage) txtDescricao.getScene().getWindow();
+			stage.close();
+		}
 	}
 
 	@SuppressWarnings("unchecked")
