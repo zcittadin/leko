@@ -39,6 +39,7 @@ import javafx.util.Callback;
 import zct.sistemas.leko.dao.ItensDAO;
 import zct.sistemas.leko.model.Item;
 import zct.sistemas.leko.util.AlertUtil;
+import zct.sistemas.leko.util.NotificationsUtil;
 
 @SuppressWarnings("rawtypes")
 public class ItensController implements Initializable {
@@ -166,7 +167,6 @@ public class ItensController implements Initializable {
 			}
 		};
 		searchTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-			@SuppressWarnings("unchecked")
 			@Override
 			public void handle(WorkerStateEvent workerStateEvent) {
 //				maskerPane.setVisible(false);
@@ -195,7 +195,6 @@ public class ItensController implements Initializable {
 		new Thread(searchTask).run();
 	}
 
-	@SuppressWarnings("unchecked")
 	private Node createPage(int pageIndex) {
 		int fromIndex = pageIndex * ROWS_PER_PAGE;
 		int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, obsItens.size());
@@ -203,7 +202,6 @@ public class ItensController implements Initializable {
 		return new BorderPane(tblItens);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void updateTableView() {
 		int fromIndex = 0 * ROWS_PER_PAGE;
 		int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, obsItens.size());
@@ -293,34 +291,32 @@ public class ItensController implements Initializable {
 								} else {
 									btn.setOnAction(event -> {
 										Optional<ButtonType> result = AlertUtil.makeConfirm("Exclusão",
-												"Deseja realmente remover este veículo?");
+												"Deseja realmente remover este item?");
 										if (result.get() == ButtonType.OK) {
 											Item it = getTableView().getItems().get(getIndex());
 											Task<Void> exclusionTask = new Task<Void>() {
 												@Override
 												protected Void call() throws Exception {
-//													maskerPane.setVisible(true);
-//													veiculoDAO.removeVeiculo(it);
+//														maskerPane.setVisible(true);
+													itensDAO.removeItem(it);
 													return null;
 												}
 											};
 											exclusionTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 												@Override
 												public void handle(WorkerStateEvent arg0) {
-//													NotificationsUtil.makeInfo("Cadastro de veículos",
-//															"Veículo removido com sucesso");
-
-//													veiculosItens.remove(it);
-//													tblVeiculos.refresh();
-//													maskerPane.setVisible(false);
+													NotificationsUtil.makeInfo("Cadastro de ítens",
+															"Item removido com sucesso");
+													retrieveItens();
+													tblItens.refresh();
+//														maskerPane.setVisible(false);
 												}
 											});
 											exclusionTask.setOnFailed(new EventHandler<WorkerStateEvent>() {
 												@Override
 												public void handle(WorkerStateEvent arg0) {
-//													maskerPane.setVisible(false);
-													AlertUtil.makeError("Erro",
-															"Ocorreu um erro ao remover o veículo.");
+//														maskerPane.setVisible(false);
+													AlertUtil.makeError("Erro", "Ocorreu um erro ao remover o ítem.");
 												}
 											});
 											new Thread(exclusionTask).run();
