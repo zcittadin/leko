@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+
+<AnchorPane prefHeight="542.0" prefWidth="725.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.171" fx:controller="zct.sistemas.leko.controller.DadosHeaderController">
+   <children>
+      <VBox layoutX="168.0" layoutY="25.0" prefHeight="319.0" prefWidth="302.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="30.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <Label text="Nome da empresa:" />
+                  <TextField fx:id="txtNomeEmpresa" prefHeight="25.0" prefWidth="410.0" />
+               </children>
+               <VBox.margin>
+                  <Insets left="80.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="79.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <Label text="Endereço:" />
+                  <TextField fx:id="txtEndereco" prefWidth="410.0" />
+               </children>
+               <VBox.margin>
+                  <Insets left="80.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="90.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <Label text="Cidade:" />
+                  <TextField fx:id="txtCidade" prefWidth="410.0" />
+               </children>
+               <VBox.margin>
+                  <Insets left="80.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="91.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <Label text="Estado:" />
+                  <TextField fx:id="txtEstado" prefWidth="410.0" />
+               </children>
+               <VBox.margin>
+                  <Insets left="80.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="106.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <Label text="País:" />
+                  <TextField fx:id="txtPais" prefWidth="410.0" />
+               </children>
+               <VBox.margin>
+                  <Insets left="80.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="81.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <Label text="Telefone:" />
+                  <TextField fx:id="txtTelefone" prefWidth="410.0" />
+               </children>
+               <VBox.margin>
+                  <Insets left="80.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="99.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <Label text="Email:" />
+                  <TextField fx:id="txtEmail" prefWidth="410.0" />
+               </children>
+               <VBox.margin>
+                  <Insets left="80.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="107.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <Label text="CEP:" />
+                  <TextField fx:id="txtCep" prefWidth="410.0" />
+               </children>
+               <VBox.margin>
+                  <Insets left="80.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="97.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <Label text="Logo:" />
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <ImageView fx:id="imgLogo" fitHeight="113.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../../../../../../Desktop/Zander/logos/logo_coopermaq.png" />
+                           </image>
+                        </ImageView>
+                        <Button fx:id="btLogo" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#editLogo" text="Alterar" />
+                     </children>
+                  </VBox>
+               </children>
+               <VBox.margin>
+                  <Insets left="80.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" prefHeight="56.0" prefWidth="725.0" spacing="10.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <Button fx:id="btSave" mnemonicParsing="false" onAction="#save" prefHeight="25.0" prefWidth="95.0" text="Salvar" />
+                  <Button fx:id="btCancel" mnemonicParsing="false" onAction="#cancel" prefHeight="25.0" prefWidth="95.0" text="Cancelar">
+                     <HBox.margin>
+                        <Insets right="109.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

@@ -49,6 +49,8 @@ public class ItensController implements Initializable {
 	@FXML
 	private Button btOrcamento;
 	@FXML
+	private Button btDadosHeader;
+	@FXML
 	private TableView<Item> tblItens;
 	@FXML
 	private TableColumn colDescricao;
@@ -77,6 +79,7 @@ public class ItensController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		btNovo.setGraphic(new ImageView(new Image(getClass().getResource("/icons/add.png").toExternalForm())));
 		btOrcamento.setGraphic(new ImageView(new Image(getClass().getResource("/icons/money.png").toExternalForm())));
+		btDadosHeader.setGraphic(new ImageView(new Image(getClass().getResource("/icons/header.png").toExternalForm())));
 		prepareTableView();
 		retrieveItens();
 	}
@@ -154,6 +157,32 @@ public class ItensController implements Initializable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@FXML
+	private void editHeader() {
+		try {
+			Stage stage;
+			Parent root;
+			stage = new Stage();
+			URL url = getClass().getResource("/fxml/DadosHeader.fxml");
+			FXMLLoader fxmlloader = new FXMLLoader();
+			fxmlloader.setLocation(url);
+			fxmlloader.setBuilderFactory(new JavaFXBuilderFactory());
+			root = (Parent) fxmlloader.load(url.openStream());
+			stage.setScene(new Scene(root));
+			stage.getIcons().add(new Image("/icons/tomada.png"));
+			stage.setTitle("Editar dados de cabeçalho");
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.initOwner(tblItens.getScene().getWindow());
+			stage.setResizable(false);
+			stage.showAndWait();
+			retrieveItens();
+			tblItens.refresh();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	private void retrieveItens() {

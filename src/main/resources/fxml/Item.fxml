@@ -16,7 +16,7 @@
          <children>
             <HBox alignment="CENTER" maxHeight="100.0" VBox.vgrow="ALWAYS">
                <children>
-                  <Button fx:id="btNovo" mnemonicParsing="false" onAction="#addItem" prefHeight="25.0" prefWidth="131.0" styleClass="bt-save" stylesheets="@../css/style.css" text="Novo item">
+                  <Button fx:id="btNovo" mnemonicParsing="false" onAction="#addItem" prefHeight="25.0" prefWidth="131.0" styleClass="bt-save" stylesheets="@../css/style.css" text="Adicionar ítens">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
@@ -25,6 +25,11 @@
                      </HBox.margin>
                   </Button>
                   <Button fx:id="btOrcamento" mnemonicParsing="false" onAction="#createOrcamento" styleClass="bt-save" stylesheets="@../css/style.css" text="Novo orçamento">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+                  <Button fx:id="btDadosHeader" mnemonicParsing="false" onAction="#editHeader" styleClass="bt-save" stylesheets="@../css/style.css" text="Dados de cabeçalho">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>

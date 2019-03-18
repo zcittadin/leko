@@ -6,6 +6,7 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
+import zct.sistemas.leko.model.DadosHeader;
 import zct.sistemas.leko.model.Item;
 
 public class HibernateUtil {
@@ -31,9 +32,7 @@ public class HibernateUtil {
 	private static void getConfiguration() {
 		configuration.addPackage("zct.sistemas.leko.model");
 		configuration.addAnnotatedClass(Item.class);
-//		configuration.addAnnotatedClass(Veiculo.class);
-//		configuration.addAnnotatedClass(Viagem.class);
-//		configuration.addAnnotatedClass(ViagemItens.class);
+		configuration.addAnnotatedClass(DadosHeader.class);
 		configuration.setProperty("hibernate.connection.driver_class", "org.sqlite.JDBC");
 		configuration.setProperty("hibernate.connection.url",
 				"jdbc:sqlite:C:/Users/usuario/Documents/DEV/Electron/leko/database/leko-database.db");
