@@ -165,7 +165,7 @@
                                     <Insets />
                                  </HBox.margin>
                               </Label>
-                              <Label fx:id="lblValorTotal" text="0.0">
+                              <Label fx:id="lblValorTotal" alignment="CENTER" minWidth="110.0" style="-fx-background-color: #008000; -fx-background-radius: 10;" text="0.0" textFill="WHITE" HBox.hgrow="ALWAYS">
                                  <font>
                                     <Font size="32.0" />
                                  </font>

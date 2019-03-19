@@ -1,15 +1,21 @@
 package zct.sistemas.leko.controller;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
@@ -20,17 +26,27 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import teste.ComboBoxAutoComplete;
+import zct.sistemas.leko.dao.DadosHeaderDAO;
+import zct.sistemas.leko.model.DadosHeader;
 import zct.sistemas.leko.model.Item;
+import zct.sistemas.leko.model.Orcamento;
 import zct.sistemas.leko.model.OrcamentoItem;
+import zct.sistemas.leko.report.OrcamentoReport;
+import zct.sistemas.leko.shared.DadosHeaderShared;
 import zct.sistemas.leko.shared.ItensShared;
 import zct.sistemas.leko.util.AlertUtil;
 
@@ -68,6 +84,8 @@ public class OrcamentosController implements Initializable {
 	@FXML
 	private Label lblValorTotal;
 
+	private DadosHeaderDAO dadosHeaderDAO = new DadosHeaderDAO();
+
 	private ObservableList<OrcamentoItem> obsOrcamentoItens = FXCollections.observableArrayList();
 	private ObservableList<Item> obsItens = FXCollections.observableArrayList();
 
@@ -78,6 +96,27 @@ public class OrcamentosController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+
+		Task<List<DadosHeader>> findTask = new Task<List<DadosHeader>>() {
+			@Override
+			protected List<DadosHeader> call() throws Exception {
+				return dadosHeaderDAO.findDados();
+			}
+		};
+		findTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DadosHeaderShared.setDadosHeader(findTask.getValue().get(0));
+			}
+		});
+		findTask.setOnFailed(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				AlertUtil.makeError("Erro", "Ocorreu uma falha ao buscar os dados.");
+			}
+		});
+		new Thread(findTask).run();
+
 		btGenerate
 				.setGraphic(new ImageView(new Image(getClass().getResource("/icons/orcamento.png").toExternalForm())));
 		btAddItem.setGraphic(new ImageView(new Image(getClass().getResource("/icons/add.png").toExternalForm())));
@@ -111,10 +150,12 @@ public class OrcamentosController implements Initializable {
 					}
 					valorMaoDeObra = new Double(txtMaoDeObra.getText());
 					sumMaoDeObra();
+					txtMaoDeObra.setDisable(true);
 				} else {
 					if (valorMaoDeObra > 0.0) {
 						subtractMaoDeObra();
 					}
+					txtMaoDeObra.setDisable(false);
 				}
 			}
 
@@ -142,7 +183,39 @@ public class OrcamentosController implements Initializable {
 
 	@FXML
 	private void generate() {
-
+		Stage stage = new Stage();
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.getExtensionFilters().addAll(new ExtensionFilter("PDF Files", "*.pdf"));
+		fileChooser.setTitle("Salvar relatório de viagem");
+		fileChooser.setInitialFileName("ORÇAMETO.pdf");
+		File savedFile = fileChooser.showSaveDialog(stage);
+		if (savedFile != null) {
+			Task<Integer> reportTask = new Task<Integer>() {
+				@Override
+				protected Integer call() throws Exception {
+					Orcamento orcamento = new Orcamento(valorMaoDeObra.toString(), txtServicos.getText(),
+							obsOrcamentoItens);
+					int result = OrcamentoReport.generatePdfReport(savedFile.getAbsolutePath(), orcamento,
+							DadosHeaderShared.getDadosHeader());
+					return new Integer(result);
+				}
+			};
+			reportTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+				@Override
+				public void handle(WorkerStateEvent event) {
+					int r = reportTask.getValue();
+					if (r == 1)
+						try {
+							Desktop.getDesktop().open(savedFile);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					else
+						AlertUtil.makeError("Erro!", "Ocorreu uma falha ao emitir o orçamento.");
+				}
+			});
+			new Thread(reportTask).start();
+		}
 	}
 
 	@FXML
@@ -188,52 +261,20 @@ public class OrcamentosController implements Initializable {
 
 	@SuppressWarnings("unchecked")
 	private void prepareTableView() {
-		colQuantidade.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<OrcamentoItem, String>, ObservableValue<String>>() {
-					public ObservableValue<String> call(CellDataFeatures<OrcamentoItem, String> cell) {
-						final OrcamentoItem o = cell.getValue();
-						final SimpleObjectProperty<String> simpleObject;
-						simpleObject = new SimpleObjectProperty<String>(o.getQuantidade());
-						return simpleObject;
-					}
-				});
-		colUnidade.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<OrcamentoItem, String>, ObservableValue<String>>() {
-					public ObservableValue<String> call(CellDataFeatures<OrcamentoItem, String> cell) {
-						final OrcamentoItem o = cell.getValue();
-						final SimpleObjectProperty<String> simpleObject;
-						simpleObject = new SimpleObjectProperty<String>(o.getUnidade());
-						return simpleObject;
-					}
-				});
-		colDescricao.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<OrcamentoItem, String>, ObservableValue<String>>() {
-					public ObservableValue<String> call(CellDataFeatures<OrcamentoItem, String> cell) {
-						final OrcamentoItem o = cell.getValue();
-						final SimpleObjectProperty<String> simpleObject;
-						simpleObject = new SimpleObjectProperty<String>(o.getDescricao());
-						return simpleObject;
-					}
-				});
-		colValorUnitario.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<OrcamentoItem, String>, ObservableValue<String>>() {
-					public ObservableValue<String> call(CellDataFeatures<OrcamentoItem, String> cell) {
-						final OrcamentoItem o = cell.getValue();
-						final SimpleObjectProperty<String> simpleObject;
-						simpleObject = new SimpleObjectProperty<String>(o.getValorUnitario());
-						return simpleObject;
-					}
-				});
-		colSubTotal.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<OrcamentoItem, String>, ObservableValue<String>>() {
-					public ObservableValue<String> call(CellDataFeatures<OrcamentoItem, String> cell) {
-						final OrcamentoItem o = cell.getValue();
-						final SimpleObjectProperty<String> simpleObject;
-						simpleObject = new SimpleObjectProperty<String>(o.getValorTotal());
-						return simpleObject;
-					}
-				});
+		colQuantidade.setCellValueFactory(new PropertyValueFactory<OrcamentoItem, String>("quantidade"));
+		colQuantidade.setCellFactory(TextFieldTableCell.forTableColumn());
+		colQuantidade.setOnEditCommit(new EventHandler<CellEditEvent<OrcamentoItem, String>>() {
+			@Override
+			public void handle(CellEditEvent<OrcamentoItem, String> t) {
+				((OrcamentoItem) t.getTableView().getItems().get(t.getTablePosition().getRow()))
+						.setQuantidade(t.getNewValue());
+			}
+		});
 
+		colUnidade.setCellValueFactory(new PropertyValueFactory<OrcamentoItem, String>("unidade"));
+		colDescricao.setCellValueFactory(new PropertyValueFactory<OrcamentoItem, String>("descricao"));
+		colValorUnitario.setCellValueFactory(new PropertyValueFactory<OrcamentoItem, String>("valorUnitario"));
+		colSubTotal.setCellValueFactory(new PropertyValueFactory<OrcamentoItem, String>("subtotal"));
 		Callback<TableColumn<OrcamentoItem, Object>, TableCell<OrcamentoItem, Object>> cellExcluirFactory = //
 				new Callback<TableColumn<OrcamentoItem, Object>, TableCell<OrcamentoItem, Object>>() {
 					@Override
@@ -253,7 +294,7 @@ public class OrcamentosController implements Initializable {
 												"Deseja realmente remover este item?");
 										if (result.get() == ButtonType.OK) {
 											OrcamentoItem oi = getTableView().getItems().get(getIndex());
-											Double sub = new Double(oi.getValorTotal());
+											Double sub = new Double(oi.getSubTotal());
 											valorTotal = valorTotal - sub;
 											lblValorTotal.setText(valorTotal.toString());
 											obsOrcamentoItens.remove(oi);

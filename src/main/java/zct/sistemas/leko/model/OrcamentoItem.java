@@ -4,24 +4,24 @@ import java.io.Serializable;
 
 public class OrcamentoItem implements Serializable {
 
-	private static final long serialVersionUID = -272682621530663685L;
+	private static final long serialVersionUID = 895711828894297424L;
 
 	private String quantidade;
 	private String unidade;
 	private String descricao;
 	private String valorUnitario;
-	private String valorTotal;
+	private String subtotal;
 
 	public OrcamentoItem() {
 
 	}
 
-	public OrcamentoItem(String quantidade, String unidade, String descricao, String valorUnitario, String valorTotal) {
+	public OrcamentoItem(String quantidade, String unidade, String descricao, String valorUnitario, String subtotal) {
 		this.quantidade = quantidade;
 		this.unidade = unidade;
 		this.descricao = descricao;
 		this.valorUnitario = valorUnitario;
-		this.valorTotal = valorTotal;
+		this.subtotal = subtotal;
 	}
 
 	public String getQuantidade() {
@@ -56,18 +56,18 @@ public class OrcamentoItem implements Serializable {
 		this.valorUnitario = valorUnitario;
 	}
 
-	public String getValorTotal() {
-		return valorTotal;
+	public String getSubTotal() {
+		return subtotal;
 	}
 
-	public void setValorTotal(String valorTotal) {
-		this.valorTotal = valorTotal;
+	public void setSubTotal(String subtotal) {
+		this.subtotal = subtotal;
 	}
 
 	@Override
 	public String toString() {
 		return "Orcamento [quantidade=" + quantidade + ", unidade=" + unidade + ", descricao=" + descricao
-				+ ", valorUnitario=" + valorUnitario + ", valorTotal=" + valorTotal + "]";
+				+ ", valorUnitario=" + valorUnitario + ", valorTotal=" + subtotal + "]";
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class OrcamentoItem implements Serializable {
 		result = prime * result + ((descricao == null) ? 0 : descricao.hashCode());
 		result = prime * result + ((quantidade == null) ? 0 : quantidade.hashCode());
 		result = prime * result + ((unidade == null) ? 0 : unidade.hashCode());
-		result = prime * result + ((valorTotal == null) ? 0 : valorTotal.hashCode());
+		result = prime * result + ((subtotal == null) ? 0 : subtotal.hashCode());
 		result = prime * result + ((valorUnitario == null) ? 0 : valorUnitario.hashCode());
 		return result;
 	}
@@ -106,10 +106,10 @@ public class OrcamentoItem implements Serializable {
 				return false;
 		} else if (!unidade.equals(other.unidade))
 			return false;
-		if (valorTotal == null) {
-			if (other.valorTotal != null)
+		if (subtotal == null) {
+			if (other.subtotal != null)
 				return false;
-		} else if (!valorTotal.equals(other.valorTotal))
+		} else if (!subtotal.equals(other.subtotal))
 			return false;
 		if (valorUnitario == null) {
 			if (other.valorUnitario != null)

@@ -7,7 +7,6 @@ import zct.sistemas.leko.model.Item;
 
 public class ItensShared {
 
-//	public static List<Item> itens;
 	public static SimpleListProperty<Item> itensProperty = new SimpleListProperty<>();
 
 	public static ObservableList<Item> getItens() {

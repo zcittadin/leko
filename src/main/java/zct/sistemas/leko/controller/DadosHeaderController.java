@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
@@ -22,6 +21,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import zct.sistemas.leko.dao.DadosHeaderDAO;
 import zct.sistemas.leko.model.DadosHeader;
+import zct.sistemas.leko.shared.DadosHeaderShared;
 import zct.sistemas.leko.util.AlertUtil;
 import zct.sistemas.leko.util.NotificationsUtil;
 
@@ -62,38 +62,18 @@ public class DadosHeaderController implements Initializable {
 		btCancel.setGraphic(new ImageView(new Image(getClass().getResource("/icons/cancel.png").toExternalForm())));
 		btLogo.setGraphic(new ImageView(new Image(getClass().getResource("/icons/pencil.png").toExternalForm())));
 
-		Task<List<DadosHeader>> findTask = new Task<List<DadosHeader>>() {
-			@Override
-			protected List<DadosHeader> call() throws Exception {
-				return dadosHeaderDAO.findDados();
-			}
-		};
-		findTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-			@Override
-			public void handle(WorkerStateEvent event) {
-				dados = findTask.getValue().get(0);
-				txtNomeEmpresa.setText(dados.getNomeEmpresa());
-				txtEndereco.setText(dados.getEndereco());
-				txtCidade.setText(dados.getCidade());
-				txtEstado.setText(dados.getEstado());
-				txtPais.setText(dados.getPais());
-				txtTelefone.setText(dados.getTelefone());
-				txtEmail.setText(dados.getEmail());
-				txtCep.setText(dados.getCep());
-				logoPath = dados.getLogo();
-				if (dados.getLogo() != null)
-					imgLogo.setImage(new Image(getLogoPath(dados.getLogo())));
-			}
-		});
-		findTask.setOnFailed(new EventHandler<WorkerStateEvent>() {
-			@Override
-			public void handle(WorkerStateEvent event) {
-				AlertUtil.makeError("Erro", "Ocorreu um erro ao consultar os dados.");
-				Stage stage = (Stage) txtCep.getScene().getWindow();
-				stage.close();
-			}
-		});
-		new Thread(findTask).run();
+		dados = DadosHeaderShared.getDadosHeader();
+		txtNomeEmpresa.setText(dados.getNomeEmpresa());
+		txtEndereco.setText(dados.getEndereco());
+		txtCidade.setText(dados.getCidade());
+		txtEstado.setText(dados.getEstado());
+		txtPais.setText(dados.getPais());
+		txtTelefone.setText(dados.getTelefone());
+		txtEmail.setText(dados.getEmail());
+		txtCep.setText(dados.getCep());
+		logoPath = dados.getLogo();
+		if (dados.getLogo() != null)
+			imgLogo.setImage(new Image(getLogoPath(dados.getLogo())));
 
 	}
 

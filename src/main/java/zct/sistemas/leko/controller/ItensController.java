@@ -72,7 +72,7 @@ public class ItensController implements Initializable {
 	private Pagination pagination;
 
 	private final String CENTER_COLUMN = "-fx-alignment: CENTER;";
-	private final static int ROWS_PER_PAGE = 17;
+	private final static int ROWS_PER_PAGE = 18;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
