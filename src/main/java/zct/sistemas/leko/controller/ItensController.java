@@ -38,6 +38,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import zct.sistemas.leko.dao.ItensDAO;
 import zct.sistemas.leko.model.Item;
+import zct.sistemas.leko.shared.ItensShared;
 import zct.sistemas.leko.util.AlertUtil;
 import zct.sistemas.leko.util.NotificationsUtil;
 
@@ -46,8 +47,6 @@ public class ItensController implements Initializable {
 
 	@FXML
 	private Button btNovo;
-	@FXML
-	private Button btOrcamento;
 	@FXML
 	private Button btDadosHeader;
 	@FXML
@@ -77,8 +76,7 @@ public class ItensController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		btNovo.setGraphic(new ImageView(new Image(getClass().getResource("/icons/add.png").toExternalForm())));
-		btOrcamento.setGraphic(new ImageView(new Image(getClass().getResource("/icons/money.png").toExternalForm())));
+		btNovo.setGraphic(new ImageView(new Image(getClass().getResource("/icons/shopping_cart_24.png").toExternalForm())));
 		btDadosHeader
 				.setGraphic(new ImageView(new Image(getClass().getResource("/icons/header.png").toExternalForm())));
 		prepareTableView();
@@ -105,31 +103,6 @@ public class ItensController implements Initializable {
 			stage.showAndWait();
 			retrieveItens();
 			tblItens.refresh();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@FXML
-	private void createOrcamento() {
-		try {
-			Stage stage;
-			Parent root;
-			stage = new Stage();
-			URL url = getClass().getResource("/fxml/FormOrcamentos.fxml");
-			FXMLLoader fxmlloader = new FXMLLoader();
-			fxmlloader.setLocation(url);
-			fxmlloader.setBuilderFactory(new JavaFXBuilderFactory());
-			root = (Parent) fxmlloader.load(url.openStream());
-			stage.setScene(new Scene(root));
-			((FormOrcamentosController) fxmlloader.getController()).setContext(itens);
-			stage.getIcons().add(new Image("/icons/tomada.png"));
-			stage.setTitle("Novo orçamento");
-			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.initOwner(tblItens.getScene().getWindow());
-			stage.setResizable(false);
-			stage.showAndWait();
-//			tblItens.refresh();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -203,6 +176,7 @@ public class ItensController implements Initializable {
 
 				obsItens.clear();
 				obsItens = FXCollections.observableArrayList(itens);
+				ItensShared.setItens(obsItens);
 //				tblItens.setItems(obsItens);
 				pagination = new Pagination((obsItens.size() / ROWS_PER_PAGE + 1), 0);
 				pagination.setPageFactory(new Callback<Integer, Node>() {

@@ -19,7 +19,7 @@
    <children>
       <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+            <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
                   <VBox prefWidth="50.0" />
                   <VBox prefHeight="169.0" prefWidth="525.0" spacing="10.0">
@@ -57,7 +57,11 @@
                   </VBox>
                   <VBox prefHeight="200.0" prefWidth="2.0">
                      <children>
-                        <Separator orientation="VERTICAL" prefHeight="200.0" VBox.vgrow="ALWAYS" />
+                        <Separator orientation="VERTICAL" prefHeight="200.0" VBox.vgrow="ALWAYS">
+                           <VBox.margin>
+                              <Insets bottom="-10.0" />
+                           </VBox.margin>
+                        </Separator>
                      </children>
                      <HBox.margin>
                         <Insets left="30.0" />
@@ -117,6 +121,9 @@
                      </children>
                   </VBox>
                </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
             </HBox>
             <HBox prefHeight="305.0" prefWidth="750.0" VBox.vgrow="ALWAYS">
                <children>
@@ -141,9 +148,10 @@
                   <VBox prefWidth="50.0" />
                </children>
             </HBox>
-            <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="750.0" spacing="10.0" VBox.vgrow="ALWAYS">
+            <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="750.0" spacing="10.0">
                <children>
-                  <VBox alignment="CENTER" prefHeight="110.0" prefWidth="979.0" HBox.hgrow="ALWAYS">
+                  <VBox prefWidth="50.0" />
+                  <VBox alignment="CENTER" prefHeight="110.0" HBox.hgrow="ALWAYS">
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="20.0" VBox.vgrow="ALWAYS">
                            <children>
@@ -152,7 +160,7 @@
                                     <Font size="32.0" />
                                  </font>
                                  <HBox.margin>
-                                    <Insets left="30.0" />
+                                    <Insets />
                                  </HBox.margin>
                               </Label>
                               <Label fx:id="lblValorTotal" text="0.0">

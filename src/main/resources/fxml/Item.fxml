@@ -16,29 +16,30 @@
          <children>
             <HBox alignment="CENTER" maxHeight="100.0" VBox.vgrow="ALWAYS">
                <children>
-                  <Button fx:id="btNovo" mnemonicParsing="false" onAction="#addItem" prefHeight="25.0" prefWidth="131.0" styleClass="bt-save" stylesheets="@../css/style.css" text="Adicionar ítens">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </Button>
-                  <Button fx:id="btOrcamento" mnemonicParsing="false" onAction="#createOrcamento" styleClass="bt-save" stylesheets="@../css/style.css" text="Novo orçamento">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </Button>
-                  <Button fx:id="btDadosHeader" mnemonicParsing="false" onAction="#editHeader" styleClass="bt-save" stylesheets="@../css/style.css" text="Dados de cabeçalho">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </Button>
+                  <VBox prefWidth="50.0" />
+                  <HBox alignment="BOTTOM_LEFT" prefHeight="100.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Button fx:id="btNovo" mnemonicParsing="false" onAction="#addItem" prefHeight="35.0" prefWidth="143.0" styleClass="bt-save" stylesheets="@../css/style.css" text="Adicionar ítens">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="btDadosHeader" mnemonicParsing="false" onAction="#editHeader" prefHeight="35.0" styleClass="bt-save" stylesheets="@../css/style.css" text="Dados de cabeçalho">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <VBox prefWidth="50.0" />
                </children>
             </HBox>
             <HBox VBox.vgrow="ALWAYS">
                <children>
-                  <VBox prefWidth="200.0" />
+                  <VBox prefWidth="50.0" />
                   <VBox HBox.hgrow="ALWAYS">
                      <children>
                         <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
@@ -63,7 +64,7 @@
                         </HBox>
                      </children>
                   </VBox>
-                  <VBox prefWidth="200.0" />
+                  <VBox prefWidth="50.0" />
                </children>
             </HBox>
          </children>

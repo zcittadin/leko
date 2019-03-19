@@ -10,6 +10,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -17,6 +18,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
@@ -31,10 +33,11 @@ import javafx.util.Callback;
 import teste.ComboBoxAutoComplete;
 import zct.sistemas.leko.model.Item;
 import zct.sistemas.leko.model.OrcamentoItem;
+import zct.sistemas.leko.shared.ItensShared;
 import zct.sistemas.leko.util.AlertUtil;
 
 @SuppressWarnings("rawtypes")
-public class FormOrcamentosController implements Initializable {
+public class OrcamentosController implements Initializable {
 
 	@FXML
 	private ComboBox<Item> comboItens;
@@ -46,8 +49,6 @@ public class FormOrcamentosController implements Initializable {
 	private TextField txtQuantidade;
 	@FXML
 	private Button btGenerate;
-	@FXML
-	private Button btCancel;
 	@FXML
 	private Button btAddItem;
 	@FXML
@@ -64,8 +65,14 @@ public class FormOrcamentosController implements Initializable {
 	private TableColumn colSubTotal;
 	@FXML
 	private TableColumn colExcluir;
+	@FXML
+	private Label lblValorTotal;
 
-	private ObservableList<OrcamentoItem> obsOrcamentos = FXCollections.observableArrayList();
+	private ObservableList<OrcamentoItem> obsOrcamentoItens = FXCollections.observableArrayList();
+	private ObservableList<Item> obsItens = FXCollections.observableArrayList();
+
+	private Double valorMaoDeObra = 0.0;
+	private Double valorTotal = 0.0;
 
 	private final String CENTER_COLUMN = "-fx-alignment: CENTER;";
 
@@ -73,7 +80,6 @@ public class FormOrcamentosController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		btGenerate
 				.setGraphic(new ImageView(new Image(getClass().getResource("/icons/orcamento.png").toExternalForm())));
-		btCancel.setGraphic(new ImageView(new Image(getClass().getResource("/icons/cancel.png").toExternalForm())));
 		btAddItem.setGraphic(new ImageView(new Image(getClass().getResource("/icons/add.png").toExternalForm())));
 		prepareTableView();
 		txtMaoDeObra.textProperty().addListener(new ChangeListener<String>() {
@@ -90,6 +96,18 @@ public class FormOrcamentosController implements Initializable {
 				txtMaoDeObra.requestFocus();
 			}
 		});
+
+		ItensShared.itensProperty.addListener((observable, oldList, newList) -> {
+			newList.forEach(it -> {
+				obsItens = newList;
+				Item[] itensArr = new Item[obsItens.size()];
+				itensArr = obsItens.toArray(itensArr);
+				comboItens.getItems().clear();
+				comboItens.getItems().addAll(itensArr);
+				comboItens.setTooltip(new Tooltip());
+				new ComboBoxAutoComplete<Item>(comboItens);
+			});
+		});
 	}
 
 	@FXML
@@ -99,34 +117,34 @@ public class FormOrcamentosController implements Initializable {
 
 	@FXML
 	private void addItem() {
+		Double subtotal = calculateSubTotal();
+		valorTotal = valorTotal + subtotal;
+		lblValorTotal.setText(valorTotal.toString());
 		OrcamentoItem orcamento = new OrcamentoItem(txtQuantidade.getText(), comboItens.getValue().getUnidade(),
-				comboItens.getValue().getDescricao(), comboItens.getValue().getValorUnitario().toString(), "99");
-		String s = calculateSubTotal(comboItens.getValue().getValorUnitario().toString(), txtQuantidade.getText());
-//		Double subTotal = new Double(txtQuantidade.getText());
-		obsOrcamentos.add(orcamento);
+				comboItens.getValue().getDescricao(), comboItens.getValue().getValorUnitario().toString(),
+				subtotal.toString());
+		obsOrcamentoItens.add(orcamento);
+		txtQuantidade.clear();
 
 	}
 
 	@FXML
-	private void cancel() {
-		Stage stage = (Stage) txtServicos.getScene().getWindow();
-		stage.close();
+	private void sumMaoDeObra() {
+//		valorMaoDeObra = 0.0;
+//		Platform.runLater(new Runnable() {
+//			@Override
+//			public void run() {
+//				valorMaoDeObra = "".equals(txtMaoDeObra.getText()) ? 0.0 : new Double(txtMaoDeObra.getText());
+//				valorTotal = valorTotal + valorMaoDeObra;
+//				lblValorTotal.setText(valorTotal.toString());
+//			}
+//		});
 	}
 
-	private String calculateSubTotal(String valorUnitario, String quantidade) {
-		Double vu = new Double(valorUnitario);
-		Double qtde = new Double(quantidade);
-		Double result = vu * qtde;
-		System.out.println(result);
-		return null;
-	}
-
-	public void setContext(List<Item> itens) {
-		Item[] itensArr = new Item[itens.size()];
-		itensArr = itens.toArray(itensArr);
-		comboItens.getItems().addAll(itensArr);
-		comboItens.setTooltip(new Tooltip());
-		new ComboBoxAutoComplete<Item>(comboItens);
+	private Double calculateSubTotal() {
+		Double qtde = new Double(txtQuantidade.getText());
+		Double valorUnitario = comboItens.getValue().getValorUnitario();
+		return qtde * valorUnitario;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -181,7 +199,7 @@ public class FormOrcamentosController implements Initializable {
 				new Callback<TableColumn<OrcamentoItem, Object>, TableCell<OrcamentoItem, Object>>() {
 					@Override
 					public TableCell call(final TableColumn<OrcamentoItem, Object> param) {
-						final TableCell<Item, Object> cell = new TableCell<Item, Object>() {
+						final TableCell<OrcamentoItem, Object> cell = new TableCell<OrcamentoItem, Object>() {
 							final Button btn = new Button();
 
 							@Override
@@ -195,7 +213,8 @@ public class FormOrcamentosController implements Initializable {
 										Optional<ButtonType> result = AlertUtil.makeConfirm("Exclusão",
 												"Deseja realmente remover este item?");
 										if (result.get() == ButtonType.OK) {
-
+											OrcamentoItem oi = getTableView().getItems().get(getIndex());
+											obsOrcamentoItens.remove(oi);
 										}
 									});
 //									Tooltip.install(btn, tooltipDelete);
@@ -218,7 +237,7 @@ public class FormOrcamentosController implements Initializable {
 		colSubTotal.setStyle(CENTER_COLUMN);
 		colExcluir.setStyle(CENTER_COLUMN);
 
-		tblItens.setItems(obsOrcamentos);
+		tblItens.setItems(obsOrcamentoItens);
 
 	}
 

@@ -14,7 +14,7 @@ public class Leko extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		FXMLLoader loader = new FXMLLoader();
 //		loader.setResources(new ResourceWrapper());
-		loader.setLocation(getClass().getResource("/fxml/Item.fxml"));
+		loader.setLocation(getClass().getResource("/fxml/Home.fxml"));
 		loader.load();
 		Scene sc = new Scene((Parent) loader.getRoot());
 
