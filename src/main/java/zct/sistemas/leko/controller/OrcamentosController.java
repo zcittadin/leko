@@ -1,7 +1,6 @@
 package zct.sistemas.leko.controller;
 
 import java.net.URL;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -10,13 +9,13 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
@@ -28,7 +27,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
 import javafx.util.Callback;
 import teste.ComboBoxAutoComplete;
 import zct.sistemas.leko.model.Item;
@@ -41,6 +39,8 @@ public class OrcamentosController implements Initializable {
 
 	@FXML
 	private ComboBox<Item> comboItens;
+	@FXML
+	private CheckBox checkMaoDeObra;
 	@FXML
 	private TextField txtMaoDeObra;
 	@FXML
@@ -90,10 +90,40 @@ public class OrcamentosController implements Initializable {
 				}
 			}
 		});
+		txtQuantidade.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				if (!newValue.matches("\\d{0,7}([\\.]\\d{0,4})?")) {
+					txtQuantidade.setText(oldValue);
+				}
+			}
+		});
+
+		checkMaoDeObra.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if (newValue == true) {
+					if (txtMaoDeObra.getText() == null || "".equals(txtMaoDeObra.getText().trim())) {
+						AlertUtil.makeWarning("Atenção", "Informe o valor da mão-de-obra.");
+						txtMaoDeObra.requestFocus();
+						checkMaoDeObra.setSelected(false);
+						return;
+					}
+					valorMaoDeObra = new Double(txtMaoDeObra.getText());
+					sumMaoDeObra();
+				} else {
+					if (valorMaoDeObra > 0.0) {
+						subtractMaoDeObra();
+					}
+				}
+			}
+
+		});
+
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				txtMaoDeObra.requestFocus();
+				txtServicos.requestFocus();
 			}
 		});
 
@@ -117,6 +147,16 @@ public class OrcamentosController implements Initializable {
 
 	@FXML
 	private void addItem() {
+		if ((txtQuantidade.getText() == null || "".equals(txtQuantidade.getText().trim()))) {
+			AlertUtil.makeWarning("Atenção", "Informe a quantidade do ítem selecionado.");
+			txtQuantidade.requestFocus();
+			return;
+		}
+		if (comboItens.getSelectionModel().isEmpty()) {
+			AlertUtil.makeWarning("Atenção", "Informe o ítem selecionado.");
+			comboItens.requestFocus();
+			return;
+		}
 		Double subtotal = calculateSubTotal();
 		valorTotal = valorTotal + subtotal;
 		lblValorTotal.setText(valorTotal.toString());
@@ -128,17 +168,16 @@ public class OrcamentosController implements Initializable {
 
 	}
 
-	@FXML
 	private void sumMaoDeObra() {
-//		valorMaoDeObra = 0.0;
-//		Platform.runLater(new Runnable() {
-//			@Override
-//			public void run() {
-//				valorMaoDeObra = "".equals(txtMaoDeObra.getText()) ? 0.0 : new Double(txtMaoDeObra.getText());
-//				valorTotal = valorTotal + valorMaoDeObra;
-//				lblValorTotal.setText(valorTotal.toString());
-//			}
-//		});
+		Double valor = new Double(txtMaoDeObra.getText());
+		valorTotal = valorTotal + valor;
+		lblValorTotal.setText(valorTotal.toString());
+	}
+
+	private void subtractMaoDeObra() {
+		valorTotal = valorTotal - valorMaoDeObra;
+		valorMaoDeObra = 0.0;
+		lblValorTotal.setText(valorTotal.toString());
 	}
 
 	private Double calculateSubTotal() {
@@ -214,6 +253,9 @@ public class OrcamentosController implements Initializable {
 												"Deseja realmente remover este item?");
 										if (result.get() == ButtonType.OK) {
 											OrcamentoItem oi = getTableView().getItems().get(getIndex());
+											Double sub = new Double(oi.getValorTotal());
+											valorTotal = valorTotal - sub;
+											lblValorTotal.setText(valorTotal.toString());
 											obsOrcamentoItens.remove(oi);
 										}
 									});

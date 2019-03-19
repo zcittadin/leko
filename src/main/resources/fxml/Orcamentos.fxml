@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
@@ -47,7 +48,8 @@
                                     <Insets />
                                  </HBox.margin>
                               </Label>
-                              <TextField fx:id="txtMaoDeObra" onKeyPressed="#sumMaoDeObra" prefHeight="25.0" prefWidth="476.0" />
+                              <TextField fx:id="txtMaoDeObra" prefHeight="25.0" prefWidth="444.0" />
+                              <CheckBox fx:id="checkMaoDeObra" mnemonicParsing="false" />
                            </children>
                            <VBox.margin>
                               <Insets />
@@ -172,15 +174,19 @@
                         </HBox>
                      </children>
                   </VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="638.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                  <VBox alignment="TOP_RIGHT" spacing="10.0">
                      <children>
-                        <Button fx:id="btGenerate" mnemonicParsing="false" onAction="#generate" text="Gerar orçamento">
+                        <Button fx:id="btGenerate" mnemonicParsing="false" onAction="#generate" prefHeight="35.0" text="Gerar orçamento">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
                         </Button>
                      </children>
                   </VBox>
+                  <VBox prefWidth="50.0" />
                </children>
             </HBox>
          </children>

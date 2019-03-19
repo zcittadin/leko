@@ -78,7 +78,7 @@ public class ItensController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		btNovo.setGraphic(new ImageView(new Image(getClass().getResource("/icons/shopping_cart_24.png").toExternalForm())));
 		btDadosHeader
-				.setGraphic(new ImageView(new Image(getClass().getResource("/icons/header.png").toExternalForm())));
+				.setGraphic(new ImageView(new Image(getClass().getResource("/icons/header_24.png").toExternalForm())));
 		prepareTableView();
 		retrieveItens();
 	}

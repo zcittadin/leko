@@ -20,8 +20,8 @@ public class Leko extends Application {
 
 		primaryStage.getIcons().add(new Image("/icons/tomada.png"));
 		primaryStage.setTitle("Eletro Leko");
-		primaryStage.setMinHeight(400);
-		primaryStage.setMinWidth(700);
+		primaryStage.setMinHeight(600);
+		primaryStage.setMinWidth(1000);
 		primaryStage.setScene(sc);
 		primaryStage.setMaximized(true);
 		primaryStage.show();
