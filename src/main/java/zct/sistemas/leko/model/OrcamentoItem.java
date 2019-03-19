@@ -56,18 +56,18 @@ public class OrcamentoItem implements Serializable {
 		this.valorUnitario = valorUnitario;
 	}
 
-	public String getSubTotal() {
+	public String getSubtotal() {
 		return subtotal;
 	}
 
-	public void setSubTotal(String subtotal) {
+	public void setSubtotal(String subtotal) {
 		this.subtotal = subtotal;
 	}
 
 	@Override
 	public String toString() {
 		return "Orcamento [quantidade=" + quantidade + ", unidade=" + unidade + ", descricao=" + descricao
-				+ ", valorUnitario=" + valorUnitario + ", valorTotal=" + subtotal + "]";
+				+ ", valorUnitario=" + valorUnitario + ", subtotal=" + subtotal + "]";
 	}
 
 	@Override

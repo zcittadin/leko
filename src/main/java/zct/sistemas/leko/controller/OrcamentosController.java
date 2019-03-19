@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import org.controlsfx.control.MaskerPane;
+
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -35,6 +37,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -53,6 +56,8 @@ import zct.sistemas.leko.util.AlertUtil;
 @SuppressWarnings("rawtypes")
 public class OrcamentosController implements Initializable {
 
+	@FXML
+	private AnchorPane mainPane;
 	@FXML
 	private ComboBox<Item> comboItens;
 	@FXML
@@ -84,6 +89,8 @@ public class OrcamentosController implements Initializable {
 	@FXML
 	private Label lblValorTotal;
 
+	private MaskerPane maskerPane = new MaskerPane();
+
 	private DadosHeaderDAO dadosHeaderDAO = new DadosHeaderDAO();
 
 	private ObservableList<OrcamentoItem> obsOrcamentoItens = FXCollections.observableArrayList();
@@ -96,6 +103,8 @@ public class OrcamentosController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+
+		configMaskerPane();
 
 		Task<List<DadosHeader>> findTask = new Task<List<DadosHeader>>() {
 			@Override
@@ -186,13 +195,14 @@ public class OrcamentosController implements Initializable {
 		Stage stage = new Stage();
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().addAll(new ExtensionFilter("PDF Files", "*.pdf"));
-		fileChooser.setTitle("Salvar relatório de viagem");
+		fileChooser.setTitle("Salvar orçamento");
 		fileChooser.setInitialFileName("ORÇAMETO.pdf");
 		File savedFile = fileChooser.showSaveDialog(stage);
 		if (savedFile != null) {
 			Task<Integer> reportTask = new Task<Integer>() {
 				@Override
 				protected Integer call() throws Exception {
+					maskerPane.setVisible(true);
 					Orcamento orcamento = new Orcamento(valorMaoDeObra.toString(), txtServicos.getText(),
 							obsOrcamentoItens);
 					int result = OrcamentoReport.generatePdfReport(savedFile.getAbsolutePath(), orcamento,
@@ -203,6 +213,7 @@ public class OrcamentosController implements Initializable {
 			reportTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 				@Override
 				public void handle(WorkerStateEvent event) {
+					maskerPane.setVisible(false);
 					int r = reportTask.getValue();
 					if (r == 1)
 						try {
@@ -275,6 +286,7 @@ public class OrcamentosController implements Initializable {
 		colDescricao.setCellValueFactory(new PropertyValueFactory<OrcamentoItem, String>("descricao"));
 		colValorUnitario.setCellValueFactory(new PropertyValueFactory<OrcamentoItem, String>("valorUnitario"));
 		colSubTotal.setCellValueFactory(new PropertyValueFactory<OrcamentoItem, String>("subtotal"));
+
 		Callback<TableColumn<OrcamentoItem, Object>, TableCell<OrcamentoItem, Object>> cellExcluirFactory = //
 				new Callback<TableColumn<OrcamentoItem, Object>, TableCell<OrcamentoItem, Object>>() {
 					@Override
@@ -294,7 +306,7 @@ public class OrcamentosController implements Initializable {
 												"Deseja realmente remover este item?");
 										if (result.get() == ButtonType.OK) {
 											OrcamentoItem oi = getTableView().getItems().get(getIndex());
-											Double sub = new Double(oi.getSubTotal());
+											Double sub = new Double(oi.getSubtotal());
 											valorTotal = valorTotal - sub;
 											lblValorTotal.setText(valorTotal.toString());
 											obsOrcamentoItens.remove(oi);
@@ -322,6 +334,16 @@ public class OrcamentosController implements Initializable {
 
 		tblItens.setItems(obsOrcamentoItens);
 
+	}
+
+	private void configMaskerPane() {
+		mainPane.getChildren().add(maskerPane);
+		AnchorPane.setBottomAnchor(maskerPane, 0.0);
+		AnchorPane.setTopAnchor(maskerPane, 0.0);
+		AnchorPane.setLeftAnchor(maskerPane, 0.0);
+		AnchorPane.setRightAnchor(maskerPane, 0.0);
+		maskerPane.setText("Processando dados...");
+		maskerPane.setVisible(false);
 	}
 
 }
