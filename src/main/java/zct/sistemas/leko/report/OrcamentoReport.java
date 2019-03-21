@@ -100,7 +100,8 @@ public class OrcamentoReport {
 		builder.title(cmp.horizontalList(
 				cmp.text("ORÇAMENTO").setHorizontalTextAlignment(HorizontalTextAlignment.CENTER).setStyle(titleStyle)));
 
-		builder.title(cmp.horizontalList(cmp.text("DESCRIÇÃO DOS SERVIÇOS: " + orcamento.getDescricaoServicos())));
+		builder.title(cmp.verticalList(cmp.horizontalList(cmp.text("CLIENTE: " + orcamento.getCliente())),
+				cmp.horizontalList(cmp.text("DESCRIÇÃO DOS SERVIÇOS: " + orcamento.getDescricaoServicos()))));
 
 		builder.title(cmp.horizontalList(cmp.verticalList(cmp.verticalGap(10), cmp.line(), cmp.verticalGap(10))));
 

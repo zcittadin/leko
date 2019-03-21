@@ -42,6 +42,12 @@
                               <Insets top="20.0" />
                            </VBox.margin>
                         </HBox>
+                        <HBox spacing="10.0">
+                           <children>
+                              <Label prefWidth="131.0" text="Cliente:" HBox.hgrow="ALWAYS" />
+                              <TextField fx:id="txtCliente" prefHeight="25.0" prefWidth="384.0" />
+                           </children>
+                        </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                            <children>
                               <Label prefHeight="17.0" prefWidth="222.0" text="Valor da mão-de-obra:" HBox.hgrow="ALWAYS">

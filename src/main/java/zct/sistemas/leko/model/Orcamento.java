@@ -5,8 +5,9 @@ import java.util.List;
 
 public class Orcamento implements Serializable {
 
-	private static final long serialVersionUID = 6616790170138729725L;
+	private static final long serialVersionUID = 7626936463383256951L;
 
+	private String cliente;
 	private String maoDeObra;
 	private String descricaoServicos;
 	private String total;
@@ -16,11 +17,21 @@ public class Orcamento implements Serializable {
 
 	}
 
-	public Orcamento(String maoDeObra, String total, String descricaoServicos, List<OrcamentoItem> itens) {
+	public Orcamento(String cliente, String maoDeObra, String total, String descricaoServicos,
+			List<OrcamentoItem> itens) {
+		this.cliente = cliente.toUpperCase();
 		this.maoDeObra = maoDeObra;
 		this.total = total;
-		this.descricaoServicos = descricaoServicos;
+		this.descricaoServicos = descricaoServicos.toUpperCase();
 		this.itens = itens;
+	}
+
+	public String getCliente() {
+		return cliente;
+	}
+
+	public void setCliente(String cliente) {
+		this.cliente = cliente.toUpperCase();
 	}
 
 	public String getMaoDeObra() {
@@ -40,7 +51,7 @@ public class Orcamento implements Serializable {
 	}
 
 	public String getDescricaoServicos() {
-		return descricaoServicos;
+		return descricaoServicos.toUpperCase();
 	}
 
 	public void setDescricaoServicos(String descricaoServicos) {
@@ -57,15 +68,17 @@ public class Orcamento implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Orcamento [maoDeObra=" + maoDeObra + ", descricaoServicos=" + descricaoServicos + ", total=" + total
-				+ "]";
+		return "Orcamento [cliente=" + cliente + ", maoDeObra=" + maoDeObra + ", descricaoServicos=" + descricaoServicos
+				+ ", total=" + total + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((cliente == null) ? 0 : cliente.hashCode());
 		result = prime * result + ((descricaoServicos == null) ? 0 : descricaoServicos.hashCode());
+		result = prime * result + ((itens == null) ? 0 : itens.hashCode());
 		result = prime * result + ((maoDeObra == null) ? 0 : maoDeObra.hashCode());
 		result = prime * result + ((total == null) ? 0 : total.hashCode());
 		return result;
@@ -80,10 +93,20 @@ public class Orcamento implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Orcamento other = (Orcamento) obj;
+		if (cliente == null) {
+			if (other.cliente != null)
+				return false;
+		} else if (!cliente.equals(other.cliente))
+			return false;
 		if (descricaoServicos == null) {
 			if (other.descricaoServicos != null)
 				return false;
 		} else if (!descricaoServicos.equals(other.descricaoServicos))
+			return false;
+		if (itens == null) {
+			if (other.itens != null)
+				return false;
+		} else if (!itens.equals(other.itens))
 			return false;
 		if (maoDeObra == null) {
 			if (other.maoDeObra != null)

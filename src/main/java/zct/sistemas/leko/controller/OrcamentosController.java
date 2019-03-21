@@ -72,6 +72,8 @@ public class OrcamentosController implements Initializable {
 	@FXML
 	private TextField txtQuantidade;
 	@FXML
+	private TextField txtCliente;
+	@FXML
 	private Button btGenerate;
 	@FXML
 	private Button btAddItem;
@@ -189,8 +191,13 @@ public class OrcamentosController implements Initializable {
 	@FXML
 	private void generate() {
 		if (txtMaoDeObra.getAmount() <= 0 || checkMaoDeObra.isSelected() == false) {
-			AlertUtil.makeWarning("Atenção", "Informe o valor da mão-de-obra");
+			AlertUtil.makeWarning("Atenção", "Informe o valor da mão-de-obra.");
 			txtMaoDeObra.requestFocus();
+			return;
+		}
+		if (txtCliente.getText() == null || "".equals(txtCliente.getText().trim())) {
+			AlertUtil.makeWarning("Atenção", "Informe o nome do cliente.");
+			txtCliente.requestFocus();
 			return;
 		}
 		if (obsOrcamentoItens.isEmpty()) {
@@ -209,7 +216,8 @@ public class OrcamentosController implements Initializable {
 				@Override
 				protected Integer call() throws Exception {
 					maskerPane.setVisible(true);
-					Orcamento orcamento = new Orcamento(NumberFormat.getCurrencyInstance().format(valorMaoDeObra),
+					Orcamento orcamento = new Orcamento(txtCliente.getText(),
+							NumberFormat.getCurrencyInstance().format(valorMaoDeObra),
 							NumberFormat.getCurrencyInstance().format(valorTotal), txtServicos.getText(),
 							obsOrcamentoItens);
 					int result = OrcamentoReport.generatePdfReport(savedFile.getAbsolutePath(), orcamento,
