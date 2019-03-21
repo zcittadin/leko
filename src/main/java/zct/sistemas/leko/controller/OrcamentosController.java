@@ -361,8 +361,7 @@ public class OrcamentosController implements Initializable {
 												"Deseja realmente remover este item?");
 										if (result.get() == ButtonType.OK) {
 											OrcamentoItem oi = getTableView().getItems().get(getIndex());
-											BigDecimal sub = new BigDecimal(oi.getSubtotal());
-											valorTotal = valorTotal.subtract(sub);
+											valorTotal = valorTotal.subtract(removeCurrencyMask(oi.getSubtotal()));
 											lblValorTotal.setText(NumberFormat.getCurrencyInstance()
 													.format(new BigDecimal(valorTotal.toString())));
 											obsOrcamentoItens.remove(oi);
@@ -399,6 +398,13 @@ public class OrcamentosController implements Initializable {
 		AnchorPane.setRightAnchor(maskerPane, 0.0);
 		maskerPane.setText("Processando dados...");
 		maskerPane.setVisible(false);
+	}
+
+	private BigDecimal removeCurrencyMask(String curr) {
+		curr = curr.substring(3, curr.length()).trim();
+		curr = curr.replace(".", "");
+		curr = curr.replace(",", ".");
+		return new BigDecimal(curr);
 	}
 
 }
