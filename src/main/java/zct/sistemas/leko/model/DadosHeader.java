@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @Table(name = "DADOS_HEADER")
 public class DadosHeader implements Serializable {
 
-	private static final long serialVersionUID = -2613219041950326913L;
+	private static final long serialVersionUID = -8968248792724055078L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,8 +27,6 @@ public class DadosHeader implements Serializable {
 	private String cidade;
 	@Column(name = "ESTADO")
 	private String estado;
-	@Column(name = "PAIS")
-	private String pais;
 	@Column(name = "TELEFONE")
 	private String telefone;
 	@Column(name = "EMAIL")
@@ -42,14 +40,13 @@ public class DadosHeader implements Serializable {
 
 	}
 
-	public DadosHeader(Long id, String nomeEmpresa, String endereco, String cidade, String estado, String pais,
-			String telefone, String email, String cep, String logo) {
+	public DadosHeader(Long id, String nomeEmpresa, String endereco, String cidade, String estado, String telefone,
+			String email, String cep, String logo) {
 		this.id = id;
 		this.nomeEmpresa = nomeEmpresa;
 		this.endereco = endereco;
 		this.cidade = cidade;
 		this.estado = estado;
-		this.pais = pais;
 		this.telefone = telefone;
 		this.email = email;
 		this.cep = cep;
@@ -96,14 +93,6 @@ public class DadosHeader implements Serializable {
 		this.estado = estado.toUpperCase();
 	}
 
-	public String getPais() {
-		return pais;
-	}
-
-	public void setPais(String pais) {
-		this.pais = pais.toUpperCase();
-	}
-
 	public String getTelefone() {
 		return telefone;
 	}
@@ -139,8 +128,8 @@ public class DadosHeader implements Serializable {
 	@Override
 	public String toString() {
 		return "DadosHeader [id=" + id + ", nomeEmpresa=" + nomeEmpresa + ", endereco=" + endereco + ", cidade="
-				+ cidade + ", estado=" + estado + ", pais=" + pais + ", telefone=" + telefone + ", email=" + email
-				+ ", cep=" + cep + ", logo=" + logo + "]";
+				+ cidade + ", estado=" + estado + ", telefone=" + telefone + ", email=" + email + ", cep=" + cep
+				+ ", logo=" + logo + "]";
 	}
 
 	@Override

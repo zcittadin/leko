@@ -52,15 +52,6 @@
                   <Insets left="80.0" />
                </VBox.margin>
             </HBox>
-            <HBox alignment="CENTER_LEFT" spacing="106.0" VBox.vgrow="ALWAYS">
-               <children>
-                  <Label text="País:" />
-                  <TextField fx:id="txtPais" prefWidth="410.0" />
-               </children>
-               <VBox.margin>
-                  <Insets left="80.0" />
-               </VBox.margin>
-            </HBox>
             <HBox alignment="CENTER_LEFT" spacing="81.0" VBox.vgrow="ALWAYS">
                <children>
                   <Label text="Telefone:" />

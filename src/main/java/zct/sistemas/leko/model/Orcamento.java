@@ -5,18 +5,20 @@ import java.util.List;
 
 public class Orcamento implements Serializable {
 
-	private static final long serialVersionUID = 3965732394779250542L;
+	private static final long serialVersionUID = 6616790170138729725L;
 
 	private String maoDeObra;
 	private String descricaoServicos;
+	private String total;
 	private List<OrcamentoItem> itens;
 
 	public Orcamento() {
 
 	}
 
-	public Orcamento(String maoDeObra, String descricaoServicos, List<OrcamentoItem> itens) {
+	public Orcamento(String maoDeObra, String total, String descricaoServicos, List<OrcamentoItem> itens) {
 		this.maoDeObra = maoDeObra;
+		this.total = total;
 		this.descricaoServicos = descricaoServicos;
 		this.itens = itens;
 	}
@@ -27,6 +29,14 @@ public class Orcamento implements Serializable {
 
 	public void setMaoDeObra(String maoDeObra) {
 		this.maoDeObra = maoDeObra;
+	}
+
+	public String getTotal() {
+		return total;
+	}
+
+	public void setTotal(String total) {
+		this.total = total;
 	}
 
 	public String getDescricaoServicos() {
@@ -47,7 +57,8 @@ public class Orcamento implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Orcamento [maoDeObra=" + maoDeObra + ", descricaoServicos=" + descricaoServicos + "]";
+		return "Orcamento [maoDeObra=" + maoDeObra + ", descricaoServicos=" + descricaoServicos + ", total=" + total
+				+ "]";
 	}
 
 	@Override
@@ -55,8 +66,8 @@ public class Orcamento implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((descricaoServicos == null) ? 0 : descricaoServicos.hashCode());
-		result = prime * result + ((itens == null) ? 0 : itens.hashCode());
 		result = prime * result + ((maoDeObra == null) ? 0 : maoDeObra.hashCode());
+		result = prime * result + ((total == null) ? 0 : total.hashCode());
 		return result;
 	}
 
@@ -74,15 +85,15 @@ public class Orcamento implements Serializable {
 				return false;
 		} else if (!descricaoServicos.equals(other.descricaoServicos))
 			return false;
-		if (itens == null) {
-			if (other.itens != null)
-				return false;
-		} else if (!itens.equals(other.itens))
-			return false;
 		if (maoDeObra == null) {
 			if (other.maoDeObra != null)
 				return false;
 		} else if (!maoDeObra.equals(other.maoDeObra))
+			return false;
+		if (total == null) {
+			if (other.total != null)
+				return false;
+		} else if (!total.equals(other.total))
 			return false;
 		return true;
 	}

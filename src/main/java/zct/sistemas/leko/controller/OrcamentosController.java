@@ -192,19 +192,29 @@ public class OrcamentosController implements Initializable {
 
 	@FXML
 	private void generate() {
+		if (txtMaoDeObra.getText() == null || "".equals(txtMaoDeObra.getText().trim())) {
+			AlertUtil.makeWarning("Atenção", "Informe o valor da mão-de-obra");
+			txtMaoDeObra.requestFocus();
+			return;
+		}
+		if (obsOrcamentoItens.isEmpty()) {
+			AlertUtil.makeWarning("Atenção", "É necessário no mínimo um ítem para compôr o orçamento.");
+			comboItens.requestFocus();
+			return;
+		}
 		Stage stage = new Stage();
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().addAll(new ExtensionFilter("PDF Files", "*.pdf"));
 		fileChooser.setTitle("Salvar orçamento");
-		fileChooser.setInitialFileName("ORÇAMETO.pdf");
+		fileChooser.setInitialFileName("ORÇAMENTO.pdf");
 		File savedFile = fileChooser.showSaveDialog(stage);
 		if (savedFile != null) {
 			Task<Integer> reportTask = new Task<Integer>() {
 				@Override
 				protected Integer call() throws Exception {
 					maskerPane.setVisible(true);
-					Orcamento orcamento = new Orcamento(valorMaoDeObra.toString(), txtServicos.getText(),
-							obsOrcamentoItens);
+					Orcamento orcamento = new Orcamento(valorMaoDeObra.toString(), valorTotal.toString(),
+							txtServicos.getText(), obsOrcamentoItens);
 					int result = OrcamentoReport.generatePdfReport(savedFile.getAbsolutePath(), orcamento,
 							DadosHeaderShared.getDadosHeader());
 					return new Integer(result);
