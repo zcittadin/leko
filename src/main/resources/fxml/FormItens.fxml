@@ -10,21 +10,21 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import zct.fx.currency.CurrencyField?>
 
-<AnchorPane prefHeight="639.0" prefWidth="805.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zct.sistemas.leko.controller.FormItensController">
+<AnchorPane prefHeight="639.0" prefWidth="757.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zct.sistemas.leko.controller.FormItensController">
    <children>
-      <Button fx:id="btSave" layoutX="296.0" layoutY="593.0" mnemonicParsing="false" onAction="#save" prefHeight="25.0" prefWidth="94.0" text="Salvar">
+      <Button fx:id="btSave" layoutX="271.0" layoutY="600.0" mnemonicParsing="false" onAction="#save" prefHeight="25.0" prefWidth="94.0" text="Salvar">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></Button>
-      <Button fx:id="btCancel" layoutX="397.0" layoutY="593.0" mnemonicParsing="false" onAction="#cancel" prefHeight="25.0" prefWidth="94.0" text="Cancelar">
+      <Button fx:id="btCancel" layoutX="375.0" layoutY="600.0" mnemonicParsing="false" onAction="#cancel" prefHeight="25.0" prefWidth="94.0" text="Cancelar">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></Button>
-      <ComboBox fx:id="cmbUnidades" layoutX="399.0" layoutY="105.0" prefHeight="25.0" prefWidth="169.0" promptText="Unidade de medida" />
-      <Label layoutX="105.0" layoutY="35.0" text="Descrição" />
-      <Label layoutX="105.0" layoutY="88.0" text="Valor unitário" />
-      <TextField fx:id="txtDescricao" layoutX="105.0" layoutY="52.0" prefHeight="25.0" prefWidth="577.0" />
-      <TableView fx:id="tblItens" layoutX="54.0" layoutY="148.0" prefHeight="427.0" prefWidth="698.0" stylesheets="@../css/style.css">
+      <ComboBox fx:id="cmbUnidades" layoutX="324.0" layoutY="84.0" prefHeight="25.0" prefWidth="169.0" promptText="Unidade de medida" />
+      <Label layoutX="30.0" layoutY="14.0" text="Descrição" />
+      <Label layoutX="30.0" layoutY="67.0" text="Valor unitário" />
+      <TextField fx:id="txtDescricao" layoutX="30.0" layoutY="31.0" prefHeight="25.0" prefWidth="577.0" />
+      <TableView fx:id="tblItens" layoutX="30.0" layoutY="135.0" prefHeight="440.0" prefWidth="698.0" stylesheets="@../css/style.css">
         <columns>
           <TableColumn fx:id="colDescricao" prefWidth="381.0" text="Descrição" />
           <TableColumn fx:id="colValor" prefWidth="106.0" text="Valor unitário" />
@@ -32,11 +32,11 @@
             <TableColumn fx:id="colExcluir" prefWidth="84.0" text="Excluir" />
         </columns>
       </TableView>
-      <Button fx:id="btAdd" layoutX="588.0" layoutY="105.0" mnemonicParsing="false" onAction="#addItem" prefHeight="25.0" prefWidth="94.0" text="Adicionar">
+      <Button fx:id="btAdd" layoutX="513.0" layoutY="84.0" mnemonicParsing="false" onAction="#addItem" prefHeight="25.0" prefWidth="94.0" text="Adicionar">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <CurrencyField fx:id="txtValor" layoutX="105.0" layoutY="105.0" prefHeight="25.0" prefWidth="274.0" />
+      <CurrencyField fx:id="txtValor" layoutX="30.0" layoutY="84.0" prefHeight="25.0" prefWidth="274.0" />
    </children>
 </AnchorPane>

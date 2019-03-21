@@ -130,7 +130,7 @@ public class OrcamentosController implements Initializable {
 		new Thread(findTask).run();
 
 		btGenerate
-				.setGraphic(new ImageView(new Image(getClass().getResource("/icons/orcamento.png").toExternalForm())));
+				.setGraphic(new ImageView(new Image(getClass().getResource("/icons/orcamento_24.png").toExternalForm())));
 		btAddItem.setGraphic(new ImageView(new Image(getClass().getResource("/icons/add.png").toExternalForm())));
 		lblValorTotal.setText(NumberFormat.getCurrencyInstance().format(new BigDecimal(0)));
 		prepareTableView();

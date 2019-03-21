@@ -111,7 +111,6 @@ public class FormItensController implements Initializable {
 					}
 				});
 			}
-
 		});
 		saveTask.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override
