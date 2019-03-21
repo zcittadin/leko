@@ -7,10 +7,8 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 
 import java.awt.Color;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Locale;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
@@ -49,7 +47,9 @@ public class OrcamentoReport {
 				.setBackgroundColor(Color.decode("#008000")).bold();
 		StyleBuilder columnStyle = stl.style().setVerticalTextAlignment(VerticalTextAlignment.MIDDLE)
 				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER).setFontSize(8);
-		StyleBuilder totalStyle = stl.style().setFontSize(32);
+		StyleBuilder maoDeObraStyle = stl.style().setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT)
+				.setFontSize(12);
+		StyleBuilder totalStyle = stl.style().setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT).setFontSize(24);
 
 		reportTemplate.setLocale(Locale.getDefault()).setColumnStyle(columnStyle).setColumnTitleStyle(columnHeaderStyle)
 				.highlightDetailEvenRows().crosstabHighlightEvenRows();
@@ -102,13 +102,20 @@ public class OrcamentoReport {
 				cmp.text("ORÇAMENTO").setHorizontalTextAlignment(HorizontalTextAlignment.CENTER).setStyle(titleStyle)));
 
 		builder.title(cmp.horizontalList(cmp.text("DESCRIÇÃO DOS SERVIÇOS: " + orcamento.getDescricaoServicos())));
-		
+
 		builder.title(cmp.horizontalList(cmp.verticalList(cmp.verticalGap(10), cmp.line(), cmp.verticalGap(10))));
 
 		builder.setDataSource(orcamento.getItens()).columns(quantidadeColumn, unidadeColumn, descricaoColumn,
 				valorUnitarioColumn, subtotalColumn);
 
-		builder.addPageFooter(cmp.horizontalGap(50), cmp.text(orcamento.getTotal()).setStyle(totalStyle));
+		builder.addSummary(
+				cmp.verticalList(
+						cmp.horizontalList(cmp.verticalList(cmp.verticalGap(10), cmp.line(), cmp.verticalGap(10)))),
+				cmp.text("Mão-de-obra:  " + orcamento.getMaoDeObra()).setStyle(maoDeObraStyle));
+		builder.addSummary(
+				cmp.verticalList(
+						cmp.horizontalList(cmp.verticalList(cmp.verticalGap(10), cmp.line(), cmp.verticalGap(10)))),
+				cmp.text("Total:  " + orcamento.getTotal()).setStyle(totalStyle));
 
 		builder.addPageFooter(cmp.verticalGap(5), (cmp.horizontalList(cmp
 				.text("Data de emissão: "
