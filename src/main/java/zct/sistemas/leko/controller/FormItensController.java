@@ -2,13 +2,11 @@ package zct.sistemas.leko.controller;
 
 import java.math.BigDecimal;
 import java.net.URL;
+import java.text.NumberFormat;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -22,16 +20,18 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import zct.fx.currency.CurrencyField;
 import zct.sistemas.leko.constants.Unidades;
 import zct.sistemas.leko.dao.ItensDAO;
 import zct.sistemas.leko.model.Item;
+import zct.sistemas.leko.model.OrcamentoItem;
 import zct.sistemas.leko.util.AlertUtil;
 import zct.sistemas.leko.util.NotificationsUtil;
 
@@ -49,7 +49,7 @@ public class FormItensController implements Initializable {
 	@FXML
 	private TextField txtDescricao;
 	@FXML
-	private TextField txtValor;
+	private CurrencyField txtValor;
 	@FXML
 	private TableView<Item> tblItens;
 	@FXML
@@ -75,14 +75,6 @@ public class FormItensController implements Initializable {
 		cmbUnidades.getItems().setAll(Unidades.values());
 		prepareTableView();
 		tblItens.setItems(obsItens);
-		txtValor.textProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				if (!newValue.matches("\\d{0,7}([\\.]\\d{0,4})?")) {
-					txtValor.setText(oldValue);
-				}
-			}
-		});
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -93,6 +85,11 @@ public class FormItensController implements Initializable {
 
 	@FXML
 	private void save() {
+		if (obsItens.isEmpty()) {
+			AlertUtil.makeWarning("Atenção", "Não há ítens listados para serem salvos.");
+			txtDescricao.requestFocus();
+			return;
+		}
 		Task<Void> saveTask = new Task<Void>() {
 			@Override
 			protected Void call() throws Exception {
@@ -134,8 +131,7 @@ public class FormItensController implements Initializable {
 			txtDescricao.requestFocus();
 			return;
 		}
-
-		if ((txtValor.getText() == null || "".equals(txtValor.getText().trim()))) {
+		if (txtValor.getAmount() <= 0) {
 			AlertUtil.makeWarning("Atenção", "Informe o valor do item.");
 			txtValor.requestFocus();
 			return;
@@ -145,11 +141,12 @@ public class FormItensController implements Initializable {
 			cmbUnidades.requestFocus();
 			return;
 		}
-		obsItens.add(new Item(null, txtDescricao.getText(), new BigDecimal(txtValor.getText()),
+		obsItens.add(new Item(null, txtDescricao.getText(), new BigDecimal(txtValor.getAmount()),
 				cmbUnidades.getValue().getSimbolo()));
 		tblItens.refresh();
 		txtDescricao.clear();
-		txtValor.clear();
+		txtValor.setAmount(0.0);
+		;
 		cmbUnidades.getItems().clear();
 		cmbUnidades.getItems().setAll(Unidades.values());
 		txtDescricao.requestFocus();
@@ -172,33 +169,29 @@ public class FormItensController implements Initializable {
 
 	@SuppressWarnings("unchecked")
 	private void prepareTableView() {
-		colDescricao.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<Item, String>, ObservableValue<String>>() {
-					public ObservableValue<String> call(CellDataFeatures<Item, String> cell) {
-						final Item it = cell.getValue();
-						final SimpleObjectProperty<String> simpleObject;
-						simpleObject = new SimpleObjectProperty<String>(it.getDescricao());
-						return simpleObject;
+		colDescricao.setCellValueFactory(new PropertyValueFactory<Item, String>("descricao"));
+		Callback<TableColumn<Item, BigDecimal>, TableCell<Item, BigDecimal>> cellValorFactory = //
+				new Callback<TableColumn<Item, BigDecimal>, TableCell<Item, BigDecimal>>() {
+					@Override
+					public TableCell<Item, BigDecimal> call(final TableColumn<Item, BigDecimal> param) {
+						final TableCell<Item, BigDecimal> cell = new TableCell<Item, BigDecimal>() {
+							@Override
+							public void updateItem(BigDecimal item, boolean empty) {
+								super.updateItem(item, empty);
+								if (empty) {
+									setGraphic(null);
+									setText(null);
+								} else {
+									Item it = getTableView().getItems().get(getIndex());
+									setText(NumberFormat.getCurrencyInstance().format(it.getValorUnitario()));
+								}
+							}
+						};
+						return cell;
 					}
-				});
-		colValor.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<Item, BigDecimal>, ObservableValue<BigDecimal>>() {
-					public ObservableValue<BigDecimal> call(CellDataFeatures<Item, BigDecimal> cell) {
-						final Item it = cell.getValue();
-						final SimpleObjectProperty<BigDecimal> simpleObject;
-						simpleObject = new SimpleObjectProperty<BigDecimal>(it.getValorUnitario());
-						return simpleObject;
-					}
-				});
-		colUnidade.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<Item, String>, ObservableValue<String>>() {
-					public ObservableValue<String> call(CellDataFeatures<Item, String> cell) {
-						final Item it = cell.getValue();
-						final SimpleObjectProperty<String> simpleObject;
-						simpleObject = new SimpleObjectProperty<String>(it.getUnidade());
-						return simpleObject;
-					}
-				});
+				};
+		colValor.setCellFactory(cellValorFactory);
+		colUnidade.setCellValueFactory(new PropertyValueFactory<OrcamentoItem, String>("unidade"));
 		Callback<TableColumn<Item, Object>, TableCell<Item, Object>> cellExcluirFactory = //
 				new Callback<TableColumn<Item, Object>, TableCell<Item, Object>>() {
 					@Override

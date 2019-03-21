@@ -15,6 +15,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import zct.fx.currency.CurrencyField?>
 
 <AnchorPane fx:id="mainPane" prefHeight="713.0" prefWidth="1309.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zct.sistemas.leko.controller.OrcamentosController">
    <children>
@@ -48,7 +49,7 @@
                                     <Insets />
                                  </HBox.margin>
                               </Label>
-                              <TextField fx:id="txtMaoDeObra" prefHeight="25.0" prefWidth="444.0" />
+                              <CurrencyField fx:id="txtMaoDeObra" prefWidth="444.0" />
                               <CheckBox fx:id="checkMaoDeObra" mnemonicParsing="false" />
                            </children>
                            <VBox.margin>

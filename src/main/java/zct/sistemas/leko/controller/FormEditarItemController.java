@@ -5,8 +5,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
@@ -18,6 +16,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import zct.fx.currency.CurrencyField;
 import zct.sistemas.leko.constants.Unidades;
 import zct.sistemas.leko.dao.ItensDAO;
 import zct.sistemas.leko.model.Item;
@@ -30,16 +29,12 @@ public class FormEditarItemController implements Initializable {
 
 	@FXML
 	private ComboBox<Unidades> comboUnidades;
-
 	@FXML
-	private TextField txtValor;
-
+	private CurrencyField txtValor;
 	@FXML
 	private TextField txtDescricao;
-
 	@FXML
 	private Button btSave;
-
 	@FXML
 	private Button btCancel;
 
@@ -49,14 +44,6 @@ public class FormEditarItemController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		btSave.setGraphic(new ImageView(new Image(getClass().getResource("/icons/save.png").toExternalForm())));
 		btCancel.setGraphic(new ImageView(new Image(getClass().getResource("/icons/cancel.png").toExternalForm())));
-		txtValor.textProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				if (!newValue.matches("\\d{0,7}([\\.]\\d{0,4})?")) {
-					txtValor.setText(oldValue);
-				}
-			}
-		});
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -68,7 +55,7 @@ public class FormEditarItemController implements Initializable {
 	public void setContext(Item it) {
 		this.item = it;
 		txtDescricao.setText(it.getDescricao());
-		txtValor.setText(it.getValorUnitario().toString());
+		txtValor.setAmount(it.getValorUnitario().doubleValue());
 		comboUnidades.getItems().setAll(Unidades.values());
 		for (int i = 0; i < Unidades.values().length; i++) {
 			if (Unidades.values()[i].getSimbolo().equals(it.getUnidade())) {
@@ -84,18 +71,20 @@ public class FormEditarItemController implements Initializable {
 			txtDescricao.requestFocus();
 			return;
 		}
-		if ((txtValor.getText() == null || "".equals(txtValor.getText().trim()))) {
+		if (txtValor.getAmount() <= 0) {
 			AlertUtil.makeWarning("Atenção", "Informe o valor do ítem.");
 			txtValor.requestFocus();
 			return;
 		}
-		if (comboUnidades.getValue() == null) {
+		if (comboUnidades.getValue() == null)
+
+		{
 			AlertUtil.makeWarning("Atenção", "Informe a unidade de medida do ítem.");
 			comboUnidades.requestFocus();
 			return;
 		}
 		this.item.setDescricao(txtDescricao.getText());
-		this.item.setValorUnitario(new BigDecimal(txtValor.getText()));
+		this.item.setValorUnitario(new BigDecimal(txtValor.getAmount()));
 		this.item.setUnidade(comboUnidades.getValue().getSimbolo());
 		Task<Void> saveTask = new Task<Void>() {
 			@Override

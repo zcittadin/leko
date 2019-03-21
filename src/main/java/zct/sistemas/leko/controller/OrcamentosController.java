@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -44,6 +45,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import teste.ComboBoxAutoComplete;
+import zct.fx.currency.CurrencyField;
 import zct.sistemas.leko.dao.DadosHeaderDAO;
 import zct.sistemas.leko.model.DadosHeader;
 import zct.sistemas.leko.model.Item;
@@ -64,7 +66,7 @@ public class OrcamentosController implements Initializable {
 	@FXML
 	private CheckBox checkMaoDeObra;
 	@FXML
-	private TextField txtMaoDeObra;
+	private CurrencyField txtMaoDeObra;
 	@FXML
 	private TextArea txtServicos;
 	@FXML
@@ -130,15 +132,8 @@ public class OrcamentosController implements Initializable {
 		btGenerate
 				.setGraphic(new ImageView(new Image(getClass().getResource("/icons/orcamento.png").toExternalForm())));
 		btAddItem.setGraphic(new ImageView(new Image(getClass().getResource("/icons/add.png").toExternalForm())));
+		lblValorTotal.setText(NumberFormat.getCurrencyInstance().format(new BigDecimal(0)));
 		prepareTableView();
-		txtMaoDeObra.textProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				if (!newValue.matches("\\d{0,7}([\\.]\\d{0,4})?")) {
-					txtMaoDeObra.setText(oldValue);
-				}
-			}
-		});
 		txtQuantidade.textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -152,13 +147,13 @@ public class OrcamentosController implements Initializable {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 				if (newValue == true) {
-					if (txtMaoDeObra.getText() == null || "".equals(txtMaoDeObra.getText().trim())) {
+					if (txtMaoDeObra.getAmount() <= 0) {
 						AlertUtil.makeWarning("Atenção", "Informe o valor da mão-de-obra.");
 						txtMaoDeObra.requestFocus();
 						checkMaoDeObra.setSelected(false);
 						return;
 					}
-					valorMaoDeObra = new BigDecimal(txtMaoDeObra.getText());
+					valorMaoDeObra = new BigDecimal(txtMaoDeObra.getAmount());
 					sumMaoDeObra();
 					txtMaoDeObra.setDisable(true);
 				} else {
@@ -193,7 +188,7 @@ public class OrcamentosController implements Initializable {
 
 	@FXML
 	private void generate() {
-		if (txtMaoDeObra.getText() == null || "".equals(txtMaoDeObra.getText().trim())) {
+		if (txtMaoDeObra.getAmount() <= 0 || checkMaoDeObra.isSelected() == false) {
 			AlertUtil.makeWarning("Atenção", "Informe o valor da mão-de-obra");
 			txtMaoDeObra.requestFocus();
 			return;
@@ -242,19 +237,24 @@ public class OrcamentosController implements Initializable {
 
 	@FXML
 	private void addItem() {
+		if (txtMaoDeObra.getAmount() <= 0 || checkMaoDeObra.isSelected() == false) {
+			AlertUtil.makeWarning("Atenção", "Informe o valor da mão-de-obra");
+			txtMaoDeObra.requestFocus();
+			return;
+		}
+		if (comboItens.getSelectionModel().isEmpty()) {
+			AlertUtil.makeWarning("Atenção", "Selecione um ítem para adicionar.");
+			comboItens.requestFocus();
+			return;
+		}
 		if ((txtQuantidade.getText() == null || "".equals(txtQuantidade.getText().trim()))) {
 			AlertUtil.makeWarning("Atenção", "Informe a quantidade do ítem selecionado.");
 			txtQuantidade.requestFocus();
 			return;
 		}
-		if (comboItens.getSelectionModel().isEmpty()) {
-			AlertUtil.makeWarning("Atenção", "Informe o ítem selecionado.");
-			comboItens.requestFocus();
-			return;
-		}
 		BigDecimal subtotal = calculateSubTotal();
 		valorTotal = valorTotal.add(subtotal);
-		lblValorTotal.setText(valorTotal.toString());
+		lblValorTotal.setText(NumberFormat.getCurrencyInstance().format(new BigDecimal(valorTotal.toString())));
 		OrcamentoItem orcamento = new OrcamentoItem(txtQuantidade.getText(), comboItens.getValue().getUnidade(),
 				comboItens.getValue().getDescricao(), comboItens.getValue().getValorUnitario().toString(),
 				subtotal.toString());
@@ -264,15 +264,15 @@ public class OrcamentosController implements Initializable {
 	}
 
 	private void sumMaoDeObra() {
-		BigDecimal valor = new BigDecimal(txtMaoDeObra.getText());
+		BigDecimal valor = new BigDecimal(txtMaoDeObra.getAmount());
 		valorTotal = valorTotal.add(valor);
-		lblValorTotal.setText(valorTotal.toString());
+		lblValorTotal.setText(NumberFormat.getCurrencyInstance().format(new BigDecimal(valorTotal.toString())));
 	}
 
 	private void subtractMaoDeObra() {
 		valorTotal = valorTotal.subtract(valorMaoDeObra);
 		valorMaoDeObra = new BigDecimal(0);
-		lblValorTotal.setText(valorTotal.toString());
+		lblValorTotal.setText(NumberFormat.getCurrencyInstance().format(new BigDecimal(valorTotal.toString())));
 	}
 
 	private BigDecimal calculateSubTotal() {
@@ -295,8 +295,53 @@ public class OrcamentosController implements Initializable {
 
 		colUnidade.setCellValueFactory(new PropertyValueFactory<OrcamentoItem, String>("unidade"));
 		colDescricao.setCellValueFactory(new PropertyValueFactory<OrcamentoItem, String>("descricao"));
-		colValorUnitario.setCellValueFactory(new PropertyValueFactory<OrcamentoItem, String>("valorUnitario"));
-		colSubTotal.setCellValueFactory(new PropertyValueFactory<OrcamentoItem, String>("subtotal"));
+
+		Callback<TableColumn<OrcamentoItem, String>, TableCell<OrcamentoItem, String>> cellValorFactory = //
+				new Callback<TableColumn<OrcamentoItem, String>, TableCell<OrcamentoItem, String>>() {
+					@Override
+					public TableCell<OrcamentoItem, String> call(final TableColumn<OrcamentoItem, String> param) {
+						final TableCell<OrcamentoItem, String> cell = new TableCell<OrcamentoItem, String>() {
+							@Override
+							public void updateItem(String item, boolean empty) {
+								super.updateItem(item, empty);
+								if (empty) {
+									setGraphic(null);
+									setText(null);
+								} else {
+									OrcamentoItem it = getTableView().getItems().get(getIndex());
+									setText(NumberFormat.getCurrencyInstance()
+											.format(new BigDecimal(it.getValorUnitario())));
+								}
+							}
+						};
+						return cell;
+					}
+				};
+		colValorUnitario.setCellFactory(cellValorFactory);
+
+//		colSubTotal.setCellValueFactory(new PropertyValueFactory<OrcamentoItem, String>("subtotal"));
+		Callback<TableColumn<OrcamentoItem, String>, TableCell<OrcamentoItem, String>> cellSubTotalFactory = //
+				new Callback<TableColumn<OrcamentoItem, String>, TableCell<OrcamentoItem, String>>() {
+					@Override
+					public TableCell<OrcamentoItem, String> call(final TableColumn<OrcamentoItem, String> param) {
+						final TableCell<OrcamentoItem, String> cell = new TableCell<OrcamentoItem, String>() {
+							@Override
+							public void updateItem(String item, boolean empty) {
+								super.updateItem(item, empty);
+								if (empty) {
+									setGraphic(null);
+									setText(null);
+								} else {
+									OrcamentoItem it = getTableView().getItems().get(getIndex());
+									setText(NumberFormat.getCurrencyInstance()
+											.format(new BigDecimal(it.getSubtotal())));
+								}
+							}
+						};
+						return cell;
+					}
+				};
+		colSubTotal.setCellFactory(cellSubTotalFactory);
 
 		Callback<TableColumn<OrcamentoItem, Object>, TableCell<OrcamentoItem, Object>> cellExcluirFactory = //
 				new Callback<TableColumn<OrcamentoItem, Object>, TableCell<OrcamentoItem, Object>>() {
@@ -319,7 +364,8 @@ public class OrcamentosController implements Initializable {
 											OrcamentoItem oi = getTableView().getItems().get(getIndex());
 											BigDecimal sub = new BigDecimal(oi.getSubtotal());
 											valorTotal = valorTotal.subtract(sub);
-											lblValorTotal.setText(valorTotal.toString());
+											lblValorTotal.setText(NumberFormat.getCurrencyInstance()
+													.format(new BigDecimal(valorTotal.toString())));
 											obsOrcamentoItens.remove(oi);
 										}
 									});
@@ -335,7 +381,6 @@ public class OrcamentosController implements Initializable {
 					}
 				};
 		colExcluir.setCellFactory(cellExcluirFactory);
-
 		colQuantidade.setStyle(CENTER_COLUMN);
 		colUnidade.setStyle(CENTER_COLUMN);
 		colDescricao.setStyle(CENTER_COLUMN);

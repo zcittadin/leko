@@ -3,12 +3,11 @@ package zct.sistemas.leko.controller;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
@@ -28,7 +27,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -226,15 +224,27 @@ public class ItensController implements Initializable {
 
 		colDescricao.setCellValueFactory(new PropertyValueFactory<Item, String>("descricao"));
 
-		colValor.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<Item, BigDecimal>, ObservableValue<BigDecimal>>() {
-					public ObservableValue<BigDecimal> call(CellDataFeatures<Item, BigDecimal> cell) {
-						final Item it = cell.getValue();
-						final SimpleObjectProperty<BigDecimal> simpleObject;
-						simpleObject = new SimpleObjectProperty<BigDecimal>(it.getValorUnitario());
-						return simpleObject;
+		Callback<TableColumn<Item, BigDecimal>, TableCell<Item, BigDecimal>> cellValorFactory = //
+				new Callback<TableColumn<Item, BigDecimal>, TableCell<Item, BigDecimal>>() {
+					@Override
+					public TableCell<Item, BigDecimal> call(final TableColumn<Item, BigDecimal> param) {
+						final TableCell<Item, BigDecimal> cell = new TableCell<Item, BigDecimal>() {
+							@Override
+							public void updateItem(BigDecimal item, boolean empty) {
+								super.updateItem(item, empty);
+								if (empty) {
+									setGraphic(null);
+									setText(null);
+								} else {
+									Item it = getTableView().getItems().get(getIndex());
+									setText(NumberFormat.getCurrencyInstance().format(it.getValorUnitario()));
+								}
+							}
+						};
+						return cell;
 					}
-				});
+				};
+		colValor.setCellFactory(cellValorFactory);
 
 		colUnidade.setCellValueFactory(new PropertyValueFactory<Item, String>("unidade"));
 
