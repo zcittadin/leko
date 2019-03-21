@@ -1,5 +1,6 @@
 package zct.sistemas.leko.controller;
 
+import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -94,7 +95,7 @@ public class FormEditarItemController implements Initializable {
 			return;
 		}
 		this.item.setDescricao(txtDescricao.getText());
-		this.item.setValorUnitario(new Double(txtValor.getText()));
+		this.item.setValorUnitario(new BigDecimal(txtValor.getText()));
 		this.item.setUnidade(comboUnidades.getValue().getSimbolo());
 		Task<Void> saveTask = new Task<Void>() {
 			@Override

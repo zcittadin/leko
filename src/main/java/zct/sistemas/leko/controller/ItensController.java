@@ -1,6 +1,7 @@
 package zct.sistemas.leko.controller;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +30,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -76,7 +78,8 @@ public class ItensController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		btNovo.setGraphic(new ImageView(new Image(getClass().getResource("/icons/shopping_cart_24.png").toExternalForm())));
+		btNovo.setGraphic(
+				new ImageView(new Image(getClass().getResource("/icons/shopping_cart_24.png").toExternalForm())));
 		btDadosHeader
 				.setGraphic(new ImageView(new Image(getClass().getResource("/icons/header_24.png").toExternalForm())));
 		prepareTableView();
@@ -220,33 +223,21 @@ public class ItensController implements Initializable {
 
 	@SuppressWarnings("unchecked")
 	private void prepareTableView() {
-		colDescricao.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<Item, String>, ObservableValue<String>>() {
-					public ObservableValue<String> call(CellDataFeatures<Item, String> cell) {
-						final Item it = cell.getValue();
-						final SimpleObjectProperty<String> simpleObject;
-						simpleObject = new SimpleObjectProperty<String>(it.getDescricao());
-						return simpleObject;
-					}
-				});
+
+		colDescricao.setCellValueFactory(new PropertyValueFactory<Item, String>("descricao"));
+
 		colValor.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<Item, Double>, ObservableValue<Double>>() {
-					public ObservableValue<Double> call(CellDataFeatures<Item, Double> cell) {
+				new Callback<TableColumn.CellDataFeatures<Item, BigDecimal>, ObservableValue<BigDecimal>>() {
+					public ObservableValue<BigDecimal> call(CellDataFeatures<Item, BigDecimal> cell) {
 						final Item it = cell.getValue();
-						final SimpleObjectProperty<Double> simpleObject;
-						simpleObject = new SimpleObjectProperty<Double>(it.getValorUnitario());
+						final SimpleObjectProperty<BigDecimal> simpleObject;
+						simpleObject = new SimpleObjectProperty<BigDecimal>(it.getValorUnitario());
 						return simpleObject;
 					}
 				});
-		colUnidade.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<Item, String>, ObservableValue<String>>() {
-					public ObservableValue<String> call(CellDataFeatures<Item, String> cell) {
-						final Item it = cell.getValue();
-						final SimpleObjectProperty<String> simpleObject;
-						simpleObject = new SimpleObjectProperty<String>(it.getUnidade());
-						return simpleObject;
-					}
-				});
+
+		colUnidade.setCellValueFactory(new PropertyValueFactory<Item, String>("unidade"));
+
 		Callback<TableColumn<Item, Object>, TableCell<Item, Object>> cellEditFactory = //
 				new Callback<TableColumn<Item, Object>, TableCell<Item, Object>>() {
 					@Override

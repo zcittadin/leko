@@ -3,6 +3,7 @@ package zct.sistemas.leko.controller;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -96,8 +97,8 @@ public class OrcamentosController implements Initializable {
 	private ObservableList<OrcamentoItem> obsOrcamentoItens = FXCollections.observableArrayList();
 	private ObservableList<Item> obsItens = FXCollections.observableArrayList();
 
-	private Double valorMaoDeObra = 0.0;
-	private Double valorTotal = 0.0;
+	private BigDecimal valorMaoDeObra = new BigDecimal(0);
+	private BigDecimal valorTotal = new BigDecimal(0);
 
 	private final String CENTER_COLUMN = "-fx-alignment: CENTER;";
 
@@ -157,11 +158,11 @@ public class OrcamentosController implements Initializable {
 						checkMaoDeObra.setSelected(false);
 						return;
 					}
-					valorMaoDeObra = new Double(txtMaoDeObra.getText());
+					valorMaoDeObra = new BigDecimal(txtMaoDeObra.getText());
 					sumMaoDeObra();
 					txtMaoDeObra.setDisable(true);
 				} else {
-					if (valorMaoDeObra > 0.0) {
+					if (valorMaoDeObra.doubleValue() > 0.0) {
 						subtractMaoDeObra();
 					}
 					txtMaoDeObra.setDisable(false);
@@ -251,8 +252,8 @@ public class OrcamentosController implements Initializable {
 			comboItens.requestFocus();
 			return;
 		}
-		Double subtotal = calculateSubTotal();
-		valorTotal = valorTotal + subtotal;
+		BigDecimal subtotal = calculateSubTotal();
+		valorTotal = valorTotal.add(subtotal);
 		lblValorTotal.setText(valorTotal.toString());
 		OrcamentoItem orcamento = new OrcamentoItem(txtQuantidade.getText(), comboItens.getValue().getUnidade(),
 				comboItens.getValue().getDescricao(), comboItens.getValue().getValorUnitario().toString(),
@@ -263,21 +264,21 @@ public class OrcamentosController implements Initializable {
 	}
 
 	private void sumMaoDeObra() {
-		Double valor = new Double(txtMaoDeObra.getText());
-		valorTotal = valorTotal + valor;
+		BigDecimal valor = new BigDecimal(txtMaoDeObra.getText());
+		valorTotal = valorTotal.add(valor);
 		lblValorTotal.setText(valorTotal.toString());
 	}
 
 	private void subtractMaoDeObra() {
-		valorTotal = valorTotal - valorMaoDeObra;
-		valorMaoDeObra = 0.0;
+		valorTotal = valorTotal.subtract(valorMaoDeObra);
+		valorMaoDeObra = new BigDecimal(0);
 		lblValorTotal.setText(valorTotal.toString());
 	}
 
-	private Double calculateSubTotal() {
-		Double qtde = new Double(txtQuantidade.getText());
-		Double valorUnitario = comboItens.getValue().getValorUnitario();
-		return qtde * valorUnitario;
+	private BigDecimal calculateSubTotal() {
+		BigDecimal qtde = new BigDecimal(txtQuantidade.getText());
+		BigDecimal valorUnitario = comboItens.getValue().getValorUnitario();
+		return qtde.multiply(valorUnitario);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -316,8 +317,8 @@ public class OrcamentosController implements Initializable {
 												"Deseja realmente remover este item?");
 										if (result.get() == ButtonType.OK) {
 											OrcamentoItem oi = getTableView().getItems().get(getIndex());
-											Double sub = new Double(oi.getSubtotal());
-											valorTotal = valorTotal - sub;
+											BigDecimal sub = new BigDecimal(oi.getSubtotal());
+											valorTotal = valorTotal.subtract(sub);
 											lblValorTotal.setText(valorTotal.toString());
 											obsOrcamentoItens.remove(oi);
 										}

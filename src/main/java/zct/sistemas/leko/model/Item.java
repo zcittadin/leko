@@ -1,6 +1,7 @@
 package zct.sistemas.leko.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +14,7 @@ import javax.persistence.Table;
 @Table(name = "ITEM")
 public class Item implements Serializable {
 
-	private static final long serialVersionUID = -8185665236422543429L;
+	private static final long serialVersionUID = 3228925694746396418L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +23,7 @@ public class Item implements Serializable {
 	@Column(name = "DESCRICAO")
 	private String descricao;
 	@Column(name = "VALOR_UNITARIO")
-	private Double valorUnitario;
+	private BigDecimal valorUnitario;
 	@Column(name = "UNIDADE")
 	private String unidade;
 
@@ -30,7 +31,7 @@ public class Item implements Serializable {
 
 	}
 
-	public Item(Long id, String descricao, Double valorUnitario, String unidade) {
+	public Item(Long id, String descricao, BigDecimal valorUnitario, String unidade) {
 		this.id = id;
 		this.descricao = descricao.toUpperCase();
 		this.valorUnitario = valorUnitario;
@@ -53,11 +54,11 @@ public class Item implements Serializable {
 		this.descricao = descricao.toUpperCase();
 	}
 
-	public Double getValorUnitario() {
+	public BigDecimal getValorUnitario() {
 		return valorUnitario;
 	}
 
-	public void setValorUnitario(Double valorUnitario) {
+	public void setValorUnitario(BigDecimal valorUnitario) {
 		this.valorUnitario = valorUnitario;
 	}
 

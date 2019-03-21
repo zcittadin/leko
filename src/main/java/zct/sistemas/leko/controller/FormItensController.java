@@ -1,5 +1,6 @@
 package zct.sistemas.leko.controller;
 
+import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -144,7 +145,7 @@ public class FormItensController implements Initializable {
 			cmbUnidades.requestFocus();
 			return;
 		}
-		obsItens.add(new Item(null, txtDescricao.getText(), new Double(txtValor.getText()),
+		obsItens.add(new Item(null, txtDescricao.getText(), new BigDecimal(txtValor.getText()),
 				cmbUnidades.getValue().getSimbolo()));
 		tblItens.refresh();
 		txtDescricao.clear();
@@ -181,11 +182,11 @@ public class FormItensController implements Initializable {
 					}
 				});
 		colValor.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<Item, Double>, ObservableValue<Double>>() {
-					public ObservableValue<Double> call(CellDataFeatures<Item, Double> cell) {
+				new Callback<TableColumn.CellDataFeatures<Item, BigDecimal>, ObservableValue<BigDecimal>>() {
+					public ObservableValue<BigDecimal> call(CellDataFeatures<Item, BigDecimal> cell) {
 						final Item it = cell.getValue();
-						final SimpleObjectProperty<Double> simpleObject;
-						simpleObject = new SimpleObjectProperty<Double>(it.getValorUnitario());
+						final SimpleObjectProperty<BigDecimal> simpleObject;
+						simpleObject = new SimpleObjectProperty<BigDecimal>(it.getValorUnitario());
 						return simpleObject;
 					}
 				});
