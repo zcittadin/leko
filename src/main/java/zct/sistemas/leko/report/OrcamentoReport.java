@@ -74,9 +74,8 @@ public class OrcamentoReport {
 		if ("".equals(cidade) && !"".equals(estado))
 			cidadeEstado = estado;
 
-		builder.title(cmp.horizontalList().add(cmp.horizontalList(cmp.image(path).setFixedDimension(100, 100),
-				cmp.horizontalGap(10),
-				cmp.verticalList(
+		builder.title(cmp.horizontalList()
+				.add(cmp.horizontalList(cmp.image(path).setDimension(45, 70), cmp.horizontalGap(10), cmp.verticalList(
 						cmp.text(dadosHeader.getNomeEmpresa()).setStyle(mainHeaderStyle)
 								.setHorizontalTextAlignment(HorizontalTextAlignment.LEFT),
 						(dadosHeader.getEndereco() == null || "".equals(dadosHeader.getEndereco())) ? cmp.gap(0, 0)
@@ -94,7 +93,7 @@ public class OrcamentoReport {
 						(dadosHeader.getEmail() == null || "".equals(dadosHeader.getEmail())) ? cmp.gap(0, 0)
 								: cmp.text("E-MAIL: " + dadosHeader.getEmail()).setStyle(subTitleStyle)
 										.setHorizontalTextAlignment(HorizontalTextAlignment.LEFT)),
-				cmp.horizontalGap(10))));
+						cmp.horizontalGap(10))));
 
 		builder.title(cmp.horizontalList(cmp.verticalList(cmp.verticalGap(10), cmp.line(), cmp.verticalGap(10))));
 
