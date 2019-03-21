@@ -209,8 +209,9 @@ public class OrcamentosController implements Initializable {
 				@Override
 				protected Integer call() throws Exception {
 					maskerPane.setVisible(true);
-					Orcamento orcamento = new Orcamento(valorMaoDeObra.toString(), valorTotal.toString(),
-							txtServicos.getText(), obsOrcamentoItens);
+					Orcamento orcamento = new Orcamento(NumberFormat.getCurrencyInstance().format(valorMaoDeObra),
+							NumberFormat.getCurrencyInstance().format(valorTotal), txtServicos.getText(),
+							obsOrcamentoItens);
 					int result = OrcamentoReport.generatePdfReport(savedFile.getAbsolutePath(), orcamento,
 							DadosHeaderShared.getDadosHeader());
 					return new Integer(result);
@@ -256,8 +257,9 @@ public class OrcamentosController implements Initializable {
 		valorTotal = valorTotal.add(subtotal);
 		lblValorTotal.setText(NumberFormat.getCurrencyInstance().format(new BigDecimal(valorTotal.toString())));
 		OrcamentoItem orcamento = new OrcamentoItem(txtQuantidade.getText(), comboItens.getValue().getUnidade(),
-				comboItens.getValue().getDescricao(), comboItens.getValue().getValorUnitario().toString(),
-				subtotal.toString());
+				comboItens.getValue().getDescricao(),
+				NumberFormat.getCurrencyInstance().format(comboItens.getValue().getValorUnitario()),
+				NumberFormat.getCurrencyInstance().format(subtotal));
 		obsOrcamentoItens.add(orcamento);
 		txtQuantidade.clear();
 
@@ -309,8 +311,7 @@ public class OrcamentosController implements Initializable {
 									setText(null);
 								} else {
 									OrcamentoItem it = getTableView().getItems().get(getIndex());
-									setText(NumberFormat.getCurrencyInstance()
-											.format(new BigDecimal(it.getValorUnitario())));
+									setText(it.getValorUnitario());
 								}
 							}
 						};
@@ -319,7 +320,6 @@ public class OrcamentosController implements Initializable {
 				};
 		colValorUnitario.setCellFactory(cellValorFactory);
 
-//		colSubTotal.setCellValueFactory(new PropertyValueFactory<OrcamentoItem, String>("subtotal"));
 		Callback<TableColumn<OrcamentoItem, String>, TableCell<OrcamentoItem, String>> cellSubTotalFactory = //
 				new Callback<TableColumn<OrcamentoItem, String>, TableCell<OrcamentoItem, String>>() {
 					@Override
@@ -333,8 +333,7 @@ public class OrcamentosController implements Initializable {
 									setText(null);
 								} else {
 									OrcamentoItem it = getTableView().getItems().get(getIndex());
-									setText(NumberFormat.getCurrencyInstance()
-											.format(new BigDecimal(it.getSubtotal())));
+									setText(it.getSubtotal());
 								}
 							}
 						};

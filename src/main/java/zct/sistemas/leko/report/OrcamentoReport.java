@@ -7,8 +7,10 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 
 import java.awt.Color;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Locale;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
@@ -99,6 +101,8 @@ public class OrcamentoReport {
 		builder.title(cmp.horizontalList(
 				cmp.text("ORÇAMENTO").setHorizontalTextAlignment(HorizontalTextAlignment.CENTER).setStyle(titleStyle)));
 
+		builder.title(cmp.horizontalList(cmp.text("DESCRIÇÃO DOS SERVIÇOS: " + orcamento.getDescricaoServicos())));
+		
 		builder.title(cmp.horizontalList(cmp.verticalList(cmp.verticalGap(10), cmp.line(), cmp.verticalGap(10))));
 
 		builder.setDataSource(orcamento.getItens()).columns(quantidadeColumn, unidadeColumn, descricaoColumn,
