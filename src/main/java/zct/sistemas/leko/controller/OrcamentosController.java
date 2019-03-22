@@ -44,8 +44,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import teste.ComboBoxAutoComplete;
 import zct.fx.currency.CurrencyField;
+import zct.sistemas.leko.control.ComboBoxAutoComplete;
 import zct.sistemas.leko.dao.DadosHeaderDAO;
 import zct.sistemas.leko.model.DadosHeader;
 import zct.sistemas.leko.model.Item;
@@ -197,14 +197,14 @@ public class OrcamentosController implements Initializable {
 
 	@FXML
 	private void generate() {
-		if (txtMaoDeObra.getAmount() <= 0 || checkMaoDeObra.isSelected() == false) {
-			AlertUtil.makeWarning("Atenção", "Informe o valor da mão-de-obra.");
-			txtMaoDeObra.requestFocus();
-			return;
-		}
 		if (txtCliente.getText() == null || "".equals(txtCliente.getText().trim())) {
 			AlertUtil.makeWarning("Atenção", "Informe o nome do cliente.");
 			txtCliente.requestFocus();
+			return;
+		}
+		if (txtMaoDeObra.getAmount() <= 0 || checkMaoDeObra.isSelected() == false) {
+			AlertUtil.makeWarning("Atenção", "Informe o valor da mão-de-obra.");
+			txtMaoDeObra.requestFocus();
 			return;
 		}
 		if (obsOrcamentoItens.isEmpty()) {

@@ -2,6 +2,7 @@ package zct.sistemas.leko.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -72,7 +73,7 @@ public class Item implements Serializable {
 
 	@Override
 	public String toString() {
-		return descricao;
+		return descricao + " - " + NumberFormat.getCurrencyInstance().format(valorUnitario);
 	}
 
 	@Override

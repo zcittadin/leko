@@ -1,4 +1,4 @@
-package teste;
+package zct.sistemas.leko.control;
 
 import java.util.stream.Stream;
 
@@ -38,7 +38,7 @@ public class ComboBoxAutoComplete<T> {
 						+ "                           linear-gradient(to bottom,#aaaaaa 0%,#eeeeee 100%);\r\n"
 						+ "     -fx-background-insets: 0 1 1 0, 1 0 0 1, 1;\r\n" + "     -fx-padding: 7px;\r\n"
 						+ "     -fx-background-radius: 3px;\r\n" + "     -fx-border-radius: 3px;\r\n"
-						+ "     -fx-font: 16px \"Arial\";\r\n" + "     -fx-text-fill: \"black\";");
+						+ "     -fx-font: 12px \"Arial\";\r\n" + "     -fx-text-fill: \"black\";");
 		cmb.setTooltip(tp);
 		cmb.setOnKeyPressed(this::handleOnKeyPressed);
 		cmb.setOnHidden(this::handleOnHiding);
