@@ -76,6 +76,8 @@ public class OrcamentosController implements Initializable {
 	@FXML
 	private Button btGenerate;
 	@FXML
+	private Button btClean;
+	@FXML
 	private Button btAddItem;
 	@FXML
 	private TableView tblItens;
@@ -133,6 +135,7 @@ public class OrcamentosController implements Initializable {
 
 		btGenerate.setGraphic(
 				new ImageView(new Image(getClass().getResource("/icons/orcamento_24.png").toExternalForm())));
+		btClean.setGraphic(new ImageView(new Image(getClass().getResource("/icons/broom_24.png").toExternalForm())));
 		btAddItem.setGraphic(new ImageView(new Image(getClass().getResource("/icons/add.png").toExternalForm())));
 		lblValorTotal.setText(NumberFormat.getCurrencyInstance().format(new BigDecimal(0)));
 		prepareTableView();
@@ -177,15 +180,19 @@ public class OrcamentosController implements Initializable {
 
 		ItensShared.itensProperty.addListener((observable, oldList, newList) -> {
 			newList.forEach(it -> {
-				obsItens = newList;
-				Item[] itensArr = new Item[obsItens.size()];
-				itensArr = obsItens.toArray(itensArr);
-				comboItens.getItems().clear();
-				comboItens.getItems().addAll(itensArr);
-				comboItens.setTooltip(new Tooltip());
-				new ComboBoxAutoComplete<Item>(comboItens);
+				loadComboItens(newList);
 			});
 		});
+	}
+
+	private void loadComboItens(ObservableList<Item> newList) {
+		obsItens = newList;
+		Item[] itensArr = new Item[obsItens.size()];
+		itensArr = obsItens.toArray(itensArr);
+		comboItens.getItems().clear();
+		comboItens.getItems().addAll(itensArr);
+		comboItens.setTooltip(new Tooltip());
+		new ComboBoxAutoComplete<Item>(comboItens);
 	}
 
 	@FXML
@@ -289,6 +296,26 @@ public class OrcamentosController implements Initializable {
 		BigDecimal qtde = new BigDecimal(txtQuantidade.getText());
 		BigDecimal valorUnitario = comboItens.getValue().getValorUnitario();
 		return qtde.multiply(valorUnitario);
+	}
+
+	@FXML
+	private void cleanForm() {
+		if (AlertUtil.makeConfirm("Atenção", "Os dados do formulário serão perdidos. Deseja continuar?")
+				.get() == ButtonType.CANCEL) {
+			return;
+		}
+		txtServicos.clear();
+		txtCliente.clear();
+		txtMaoDeObra.clear();
+		txtQuantidade.clear();
+		comboItens.getSelectionModel().clearSelection();
+		checkMaoDeObra.setSelected(false);
+		txtMaoDeObra.setDisable(false);
+		obsOrcamentoItens.clear();
+		txtServicos.requestFocus();
+		lblValorTotal.setText(NumberFormat.getCurrencyInstance().format(new BigDecimal(0)));
+		valorMaoDeObra = new BigDecimal(0);
+		valorTotal = new BigDecimal(0);
 	}
 
 	@SuppressWarnings("unchecked")
