@@ -8,9 +8,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import org.controlsfx.control.MaskerPane;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
@@ -19,23 +20,25 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Pagination;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import zct.sistemas.leko.control.DynamicSearchField;
 import zct.sistemas.leko.dao.ItensDAO;
 import zct.sistemas.leko.model.Item;
 import zct.sistemas.leko.shared.ItensShared;
@@ -45,6 +48,8 @@ import zct.sistemas.leko.util.NotificationsUtil;
 @SuppressWarnings("rawtypes")
 public class ItensController implements Initializable {
 
+	@FXML
+	private AnchorPane mainPane;
 	@FXML
 	private Button btNovo;
 	@FXML
@@ -63,16 +68,24 @@ public class ItensController implements Initializable {
 	private TableColumn colExcluir;
 	@FXML
 	private StackPane paneTable;
+	@FXML
+	private TextField txtSearch;
+	@FXML
+	private Label lblQtdeItens;
+
+	private Tooltip tooltipEditar = new Tooltip("Editar este ítem");
+	private Tooltip tooltipExcluir = new Tooltip("Excluir este ítem");
+
+	private MaskerPane maskerPane = new MaskerPane();
 
 	private ItensDAO itensDAO = new ItensDAO();
+	private DynamicSearchField<Item> dsf;
 
 	private List<Item> itens;
 	private static ObservableList<Item> obsItens = FXCollections.observableArrayList();
 
-	private Pagination pagination;
-
 	private final String CENTER_COLUMN = "-fx-alignment: CENTER;";
-	private final static int ROWS_PER_PAGE = 18;
+	private static String TOOLTIP_CSS = "-fx-font-size: 8pt; -fx-font-weight: bold; -fx-background-color: #008000;";
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -80,7 +93,9 @@ public class ItensController implements Initializable {
 				new ImageView(new Image(getClass().getResource("/icons/shopping_cart_24.png").toExternalForm())));
 		btDadosHeader
 				.setGraphic(new ImageView(new Image(getClass().getResource("/icons/header_24.png").toExternalForm())));
+		configMaskerPane();
 		prepareTableView();
+		configToolTips();
 		retrieveItens();
 	}
 
@@ -127,8 +142,11 @@ public class ItensController implements Initializable {
 			stage.initOwner(tblItens.getScene().getWindow());
 			stage.setResizable(false);
 			stage.showAndWait();
-			retrieveItens();
-			tblItens.refresh();
+			if (!"".equals(txtSearch.getText().trim()) && txtSearch.getText() != null) {
+				dsf.filter(txtSearch.getText());
+			} else {
+				retrieveItens();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -164,8 +182,7 @@ public class ItensController implements Initializable {
 		Task<Void> searchTask = new Task<Void>() {
 			@Override
 			protected Void call() throws Exception {
-//				if (maskerPane.isVisible() == false)
-//					maskerPane.setVisible(true);
+				maskerPane.setVisible(true);
 				itens = itensDAO.findItens();
 				return null;
 			}
@@ -173,50 +190,23 @@ public class ItensController implements Initializable {
 		searchTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent workerStateEvent) {
-//				maskerPane.setVisible(false);
-
+				maskerPane.setVisible(false);
 				obsItens.clear();
 				obsItens = FXCollections.observableArrayList(itens);
 				ItensShared.setItens(obsItens);
-//				tblItens.setItems(obsItens);
-				pagination = new Pagination((obsItens.size() / ROWS_PER_PAGE + 1), 0);
-				pagination.setPageFactory(new Callback<Integer, Node>() {
-					@Override
-					public Node call(Integer pageIndex) {
-						return createPage(pageIndex);
-					}
-				});
-				paneTable.getChildren().add(pagination);
-				updateTableView();
+				tblItens.setItems(obsItens);
+				dsf = new DynamicSearchField<Item>(txtSearch, tblItens);
+				lblQtdeItens.setText(obsItens.size() + " ítens cadastrados");
 			}
 		});
 		searchTask.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent workerStateEvent) {
-//				maskerPane.setVisible(false);
+				maskerPane.setVisible(false);
 				AlertUtil.makeError("Erro", "Ocorreu um erro ao consultar a frota de veículos.");
 			}
 		});
 		new Thread(searchTask).run();
-	}
-
-	private Node createPage(int pageIndex) {
-		int fromIndex = pageIndex * ROWS_PER_PAGE;
-		int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, obsItens.size());
-		tblItens.setItems(FXCollections.observableArrayList(obsItens.subList(fromIndex, toIndex)));
-		return new BorderPane(tblItens);
-	}
-
-	private void updateTableView() {
-		int fromIndex = 0 * ROWS_PER_PAGE;
-		int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, obsItens.size());
-		int minIndex = Math.min(toIndex, obsItens.size());
-		int totalPage = (int) (Math.ceil(obsItens.size() * 1.0 / ROWS_PER_PAGE));
-		pagination.setPageCount(totalPage);
-		SortedList<Item> sortedData = new SortedList<>(
-				FXCollections.observableArrayList(obsItens.subList(Math.min(fromIndex, minIndex), minIndex)));
-		sortedData.comparatorProperty().bind(tblItens.comparatorProperty());
-		tblItens.setItems(sortedData);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -267,7 +257,7 @@ public class ItensController implements Initializable {
 										Item it = getTableView().getItems().get(getIndex());
 										editItem(it);
 									});
-									// Tooltip.install(btn, tooltipEdit);
+									Tooltip.install(btn, tooltipEditar);
 									btn.setStyle("-fx-graphic: url('/icons/pencil.png');");
 									btn.setCursor(Cursor.HAND);
 									setGraphic(btn);
@@ -302,7 +292,7 @@ public class ItensController implements Initializable {
 											Task<Void> exclusionTask = new Task<Void>() {
 												@Override
 												protected Void call() throws Exception {
-//														maskerPane.setVisible(true);
+													maskerPane.setVisible(true);
 													itensDAO.removeItem(it);
 													return null;
 												}
@@ -314,20 +304,20 @@ public class ItensController implements Initializable {
 															"Item removido com sucesso");
 													retrieveItens();
 													tblItens.refresh();
-//														maskerPane.setVisible(false);
+													maskerPane.setVisible(false);
 												}
 											});
 											exclusionTask.setOnFailed(new EventHandler<WorkerStateEvent>() {
 												@Override
 												public void handle(WorkerStateEvent arg0) {
-//														maskerPane.setVisible(false);
+													maskerPane.setVisible(false);
 													AlertUtil.makeError("Erro", "Ocorreu um erro ao remover o ítem.");
 												}
 											});
 											new Thread(exclusionTask).run();
 										}
 									});
-//									Tooltip.install(btn, tooltipDelete);
+									Tooltip.install(btn, tooltipExcluir);
 									btn.setStyle("-fx-graphic: url('/icons/trash.png');");
 									btn.setCursor(Cursor.HAND);
 									setGraphic(btn);
@@ -345,5 +335,20 @@ public class ItensController implements Initializable {
 		colEditar.setStyle(CENTER_COLUMN);
 		colExcluir.setStyle(CENTER_COLUMN);
 
+	}
+
+	private void configMaskerPane() {
+		mainPane.getChildren().add(maskerPane);
+		AnchorPane.setBottomAnchor(maskerPane, 0.0);
+		AnchorPane.setTopAnchor(maskerPane, 0.0);
+		AnchorPane.setLeftAnchor(maskerPane, 0.0);
+		AnchorPane.setRightAnchor(maskerPane, 0.0);
+		maskerPane.setText("Processando dados...");
+		maskerPane.setVisible(false);
+	}
+
+	private void configToolTips() {
+		tooltipEditar.setStyle(TOOLTIP_CSS);
+		tooltipExcluir.setStyle(TOOLTIP_CSS);
 	}
 }

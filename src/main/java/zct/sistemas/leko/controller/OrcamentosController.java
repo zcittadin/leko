@@ -39,6 +39,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -148,6 +149,13 @@ public class OrcamentosController implements Initializable {
 			}
 		});
 
+		txtServicos.setOnKeyPressed(event -> {
+			if (event.getCode() == KeyCode.TAB) {
+				txtCliente.requestFocus();
+				event.consume();
+			}
+		});
+
 		checkMaoDeObra.selectedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -180,7 +188,8 @@ public class OrcamentosController implements Initializable {
 
 		ItensShared.itensProperty.addListener((observable, oldList, newList) -> {
 			newList.forEach(it -> {
-				loadComboItens(newList);
+				if (obsItens.size() == 0)
+					loadComboItens(newList);
 			});
 		});
 	}

@@ -49,7 +49,7 @@ public class OrcamentoReport {
 				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER).setFontSize(8);
 		StyleBuilder maoDeObraStyle = stl.style().setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT)
 				.setFontSize(12);
-		StyleBuilder totalStyle = stl.style().setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT).setFontSize(24);
+		StyleBuilder totalStyle = stl.style().setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT).setFontSize(16);
 
 		reportTemplate.setLocale(Locale.getDefault()).setColumnStyle(columnStyle).setColumnTitleStyle(columnHeaderStyle)
 				.highlightDetailEvenRows().crosstabHighlightEvenRows();

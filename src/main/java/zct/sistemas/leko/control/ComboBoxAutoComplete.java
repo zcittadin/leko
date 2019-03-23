@@ -10,6 +10,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Window;
+import zct.sistemas.leko.util.StringUtils;
 
 /**
  * 
@@ -49,7 +50,7 @@ public class ComboBoxAutoComplete<T> {
 		KeyCode code = e.getCode();
 
 		if (code.isLetterKey()) {
-			filter += e.getText();
+			filter += StringUtils.unaccent(e.getText());
 		}
 		if (code == KeyCode.BACK_SPACE && filter.length() > 0) {
 			filter = filter.substring(0, filter.length() - 1);
@@ -64,11 +65,10 @@ public class ComboBoxAutoComplete<T> {
 		} else {
 			Stream<T> itens = cmb.getItems().stream();
 			String txtUsr = filter.toString().toLowerCase();
-			itens.filter(el -> el.toString().toLowerCase().contains(txtUsr)).forEach(filteredList::add);
+			itens.filter(el -> StringUtils.unaccent(el.toString()).toLowerCase().contains(txtUsr))
+					.forEach(filteredList::add);
 			cmb.getTooltip().setText(txtUsr);
 			Window stage = cmb.getScene().getWindow();
-//			double posX = stage.getX() + cmb.getBoundsInParent().getMinX();
-//			double posY = stage.getY() + cmb.getBoundsInParent().getMinY();
 			double posX = stage.getX() + cmb.localToScene(cmb.getBoundsInLocal()).getMinX();
 			double posY = stage.getY() + cmb.localToScene(cmb.getBoundsInLocal()).getMinY();
 			cmb.getTooltip().show(stage, posX, posY);

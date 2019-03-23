@@ -49,4 +49,19 @@ public class ItensDAO {
 			return null;
 		return list;
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<Item> findItensByDescricao(String description) {
+		Session session = HibernateUtil.openSession();
+		session.beginTransaction();
+		String sql = "SELECT it FROM Item it WHERE it.descricao LIKE '%" + description.toUpperCase()
+				+ "%' ORDER BY it.descricao ASC";
+		Query query = session.createQuery(sql);
+		List<Item> list = new ArrayList<>();
+		list = query.getResultList();
+		session.close();
+		if (list == null || list.isEmpty())
+			return null;
+		return list;
+	}
 }

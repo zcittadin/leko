@@ -2,11 +2,12 @@ package zct.sistemas.leko.constants;
 
 public enum Unidades {
 
-	CENTIMETROS("Cm", "CENTÍMETROS"),
+	CENTIMETROS("CM", "CENTÍMETROS"),
 	GRAMAS("G", "GRAMAS"), 
-	KILOGRAMAS("Kg", "KILOGRAMAS"), 
-	METROS("M", "METROS"),
+	KILOGRAMAS("KG", "KILOGRAMAS"), 
+	METROS("MT", "METROS"),
 	PEÇAS("PÇ", "PEÇAS"),
+	POLEGADAS("POL", "POLEGADAS"),
 	UNIDADES("UN", "UNIDADES");
 
 	private final String simbolo;
