@@ -1,5 +1,8 @@
 package zct.sistemas.leko.main;
 
+import java.io.IOException;
+import java.util.ListResourceBundle;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,9 +14,9 @@ import zct.sistemas.leko.util.HibernateUtil;
 public class Leko extends Application {
 
 	@Override
-	public void start(Stage primaryStage) throws Exception {
+	public void start(Stage primaryStage) throws IOException {
 		FXMLLoader loader = new FXMLLoader();
-//		loader.setResources(new ResourceWrapper());
+		loader.setResources(new ResourceWrapper());
 		loader.setLocation(getClass().getResource("/fxml/Home.fxml"));
 		loader.load();
 		Scene sc = new Scene((Parent) loader.getRoot());
@@ -25,7 +28,6 @@ public class Leko extends Application {
 		primaryStage.setScene(sc);
 		primaryStage.setMaximized(true);
 		primaryStage.show();
-
 	}
 
 	public static void main(String[] args) {
@@ -38,10 +40,10 @@ public class Leko extends Application {
 		System.exit(0);
 	}
 
-//	private static class ResourceWrapper extends ListResourceBundle {
-//		@Override
-//		protected Object[][] getContents() {
-//			return new Object[0][];
-//		}
-//	}
+	private static class ResourceWrapper extends ListResourceBundle {
+		@Override
+		protected Object[][] getContents() {
+			return new Object[0][];
+		}
+	}
 }

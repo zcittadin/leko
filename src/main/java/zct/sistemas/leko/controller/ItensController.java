@@ -203,7 +203,7 @@ public class ItensController implements Initializable {
 			@Override
 			public void handle(WorkerStateEvent workerStateEvent) {
 				maskerPane.setVisible(false);
-				AlertUtil.makeError("Erro", "Ocorreu um erro ao consultar a frota de veículos.");
+				AlertUtil.makeError("Erro", "Ocorreu um erro ao buscar os ítens cadastrados.");
 			}
 		});
 		new Thread(searchTask).run();

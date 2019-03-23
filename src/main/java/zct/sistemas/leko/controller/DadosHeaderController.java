@@ -146,36 +146,6 @@ public class DadosHeaderController implements Initializable {
 			txtNomeEmpresa.requestFocus();
 			return false;
 		}
-//		if ((txtEndereco.getText() == null || "".equals(txtEndereco.getText().trim()))) {
-//			AlertUtil.makeWarning("Atenção", "Informe o endereço da empresa.");
-//			txtEndereco.requestFocus();
-//			return false;
-//		}
-//		if ((txtCidade.getText() == null || "".equals(txtCidade.getText().trim()))) {
-//			AlertUtil.makeWarning("Atenção", "Informe a cidade da empresa.");
-//			txtCidade.requestFocus();
-//			return false;
-//		}
-//		if ((txtEstado.getText() == null || "".equals(txtEstado.getText().trim()))) {
-//			AlertUtil.makeWarning("Atenção", "Informe o estado da empresa.");
-//			txtEstado.requestFocus();
-//			return false;
-//		}
-//		if ((txtTelefone.getText() == null || "".equals(txtTelefone.getText().trim()))) {
-//			AlertUtil.makeWarning("Atenção", "Informe o telefone da empresa.");
-//			txtTelefone.requestFocus();
-//			return false;
-//		}
-//		if ((txtEmail.getText() == null || "".equals(txtEmail.getText().trim()))) {
-//			AlertUtil.makeWarning("Atenção", "Informe o E-mail da empresa.");
-//			txtEmail.requestFocus();
-//			return false;
-//		}
-//		if ((txtCep.getText() == null || "".equals(txtCep.getText().trim()))) {
-//			AlertUtil.makeWarning("Atenção", "Informe o CEP da empresa.");
-//			txtCep.requestFocus();
-//			return false;
-//		}
 		return true;
 	}
 

@@ -35,6 +35,7 @@ public class HibernateUtil {
 		configuration.addAnnotatedClass(DadosHeader.class);
 		configuration.setProperty("hibernate.connection.driver_class", "org.sqlite.JDBC");
 		configuration.setProperty("hibernate.connection.url",
+//				"jdbc:sqlite:C:/EletroLeko/database/leko-database.db");
 				"jdbc:sqlite:C:/Users/usuario/Documents/DEV/Electron/leko/database/leko-database.db");
 		configuration.setProperty("hibernate.connection.username", "");
 		configuration.setProperty("hibernate.connection.password", "");
